@@ -1,13 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json.Linq;
-using Npgsql;
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography;
-using System.Text;
+﻿using ImHungryBackendER;
+using ImHungryBackendER.Models.ParameterModels;
 using WebAPI_Giris.Models;
-using WebAPI_Giris.Models.Parameters.AuthParams;
-using WebAPI_Giris.Models.Parameters.TokenParams;
-using WebAPI_Giris.Models.Parameters.UserParams;
 using WebAPI_Giris.Services.ControllerServices.Interfaces;
 using WebAPI_Giris.Services.OtherServices.Interfaces;
 
@@ -15,139 +8,85 @@ namespace WebAPI_Giris.Services.OtherServices
 {
     public class AuthService : IAuthService
     {
+        private readonly ImHungryContext _context;
         private readonly ICryptionService cryptionService;
         private readonly ITokenService tokenService;
-        private readonly IDbService dbService;
         private readonly IUserService userService;
 
-        public AuthService(ICryptionService cryptionService, 
+        public AuthService(
+            ImHungryContext context,
+            ICryptionService cryptionService, 
             ITokenService tokenService, 
-            IDbService dbService, 
             IUserService userService)
         {
+            _context = context;
             this.cryptionService = cryptionService;
             this.tokenService = tokenService;
-            this.dbService = dbService;
             this.userService = userService;
         }
 
-        public async Task<int> GetIdByUsername(string username)
+        public async Task<long> GetIdByUsername(string Username)
         {
-            int userID = -1;
-            string query = "select \"userID\" from \"Users\" where \"userName\"=@userName;";
+            var user = _context.Users.Where(user => user.Username == Username).FirstOrDefault();
+            if (user is null) return -1;
 
-            await dbService.CheckConnectionAsync();
-
-            NpgsqlDataReader reader;
-            NpgsqlCommand cmd = new NpgsqlCommand(query, dbService.GetConnection());
-            cmd.Parameters.AddWithValue("@userName", username);
-
-            try
-            {
-                reader = await cmd.ExecuteReaderAsync();
-
-                if (await reader.ReadAsync())
-                {
-                    userID = (int)reader["userID"];
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new SystemException(ex.StackTrace);
-            }
-
-            await reader.CloseAsync();
-            return userID;
+            return user.Id;
         }
 
         public async Task<UserLoginResponse> LoginUserAsync(UserLoginRequest request)
         {
             UserLoginResponse response = new();
-            NpgsqlDataReader reader;
-
             bool isLogin = false;
-            string plainPassword = cryptionService.Decrypt(request.encryptedPassword);
-            string query = $"select \"password\" from \"Users\" where \"userName\"=@userName;";
+            string plainPassword = cryptionService.Decrypt(request.EncryptedPassword);
 
-            await dbService.CheckConnectionAsync();
+            var user = _context.Users.Where(user => user.Username == request.Username).FirstOrDefault();
+            if (user is null) return response;
 
-            NpgsqlCommand cmd = new NpgsqlCommand(query, dbService.GetConnection());
-            cmd.Parameters.AddWithValue("@userName", request.username);
-
-            try
-            {
-                reader = await cmd.ExecuteReaderAsync();
-
-                //valid username
-                if (await reader.ReadAsync())
-                {
-                    string hashedPassword = (string)reader["password"]; //password in db
-                    isLogin = BCrypt.Net.BCrypt.Verify(plainPassword, hashedPassword); //Checks password is valid or not
-                }
-                //else username or password is wrong
-
-            }
-            catch (Exception e)
-            {
-                throw new SystemException(e.StackTrace);
-            }
-
-            await reader.CloseAsync();
+            isLogin = BCrypt.Net.BCrypt.Verify(request.EncryptedPassword, user.Password); //request.encrypted => plainPassword
 
             if (isLogin)
             {
-                int userID = await GetIdByUsername(request.username);
-                var generatedToken = await tokenService.GenerateToken(new GenerateTokenRequest { userID = userID.ToString() });
+                var generatedToken = await tokenService.GenerateToken(new GenerateTokenRequest { UserID = user.Id.ToString() });
 
-                response.authenticateResult = true;
-                response.authToken = generatedToken.token;
-                response.accessTokenExpireDate = generatedToken.tokenExpireDate;
+                response.AuthenticateResult = true;
+                response.AuthToken = generatedToken.Token;
+                response.AccessTokenExpireDate = generatedToken.TokenExpireDate;
             }
 
             return await Task.FromResult(response);
         }
 
-        public async Task<UserRegisterResponse> RegisterUserAsync(Users user)
+        public async Task<UserRegisterResponse> RegisterUserAsync(UserRegisterRequest user)
         {
             UserRegisterResponse response = new();
             response.isSuccess = true;
 
             //check if username already exists
-            if (await userService.VerifyUsername(new VerifyUsernameRequest() { username = user.userName }))
+            if (await userService.VerifyUsername(user.Username))
             {
                 response.isSuccess = false;
-                response.errorMessage = "Invalid username";
+                response.ErrorMessage = "Invalid username";
                 return response;
             }
-            dbService.CloseConnection(); //avoid command already progress error
 
-            string password = cryptionService.Decrypt(user.password); //The password comes encrypted from the frontend
-            password = BCrypt.Net.BCrypt.HashPassword(password); //Hashing the password for security
+            //string password = cryptionService.Decrypt(user.Password); //The password comes encrypted from the frontend
+            string password = BCrypt.Net.BCrypt.HashPassword(user.Password); //Hashing the password for security
+            //72 -> yorum satırını kaldır, 73 -> string kaldır, user.Password => password 
 
-            string query = $"insert into \"Users\" (\"firstName\",\"lastName\",\"userName\",\"email\",\"phoneNumber\",\"password\") " +
-                                          $"values (@firstName, @lastName, @userName, @email, @phoneNumber, @password);";
-
-            await dbService.CheckConnectionAsync();
-
-            NpgsqlCommand cmd = new NpgsqlCommand(query, dbService.GetConnection());
-            cmd.Parameters.AddWithValue("@firstName", user.firstName);
-            cmd.Parameters.AddWithValue("@lastName", user.lastName);
-            cmd.Parameters.AddWithValue("@userName", user.userName);
-            cmd.Parameters.AddWithValue("@email", user.email);
-            cmd.Parameters.AddWithValue("@phoneNumber", user.phoneNumber);
-            cmd.Parameters.AddWithValue("@password", password);
-
-            try
+            User newUser = new User()
             {
-                await cmd.ExecuteNonQueryAsync();
-            }
-            catch (Exception e)
-            {
-                response.isSuccess = false;
-                response.errorMessage = e.Message;
-            }
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Username = user.Username,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                Password = password
+            };
 
-            return response;
+            _context.Users.Add(newUser);
+            _context.SaveChanges();
+
+            return await Task.FromResult(response);
         }
     }
 }

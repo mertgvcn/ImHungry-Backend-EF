@@ -1,24 +1,25 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using WebAPI_Giris.Models.Parameters.UserParams;
+﻿using ImHungryBackendER.Models.ParameterModels;
+using ImHungryBackendER.Models.ViewModels;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI_Giris.Services.ControllerServices.Interfaces
 {
     public interface IUserService
     {
         public Task<JsonResult> GetUserInfo();
-        public int GetCurrentUserID();
+        public long GetCurrentUserID();
 
         public Task<JsonResult> GetAccountInfo();
-        public Task<bool> SetAccountInfo(SetAccountInfoRequest request);
+        public Task SetAccountInfo(UserAccountViewModel request);
 
         public Task<JsonResult> GetCurrentLocation();
-        public Task<bool> SetCurrentLocation(SetCurrentLocationRequest request);
+        public Task SetCurrentLocation(long locationID);
 
-        public Task<bool> VerifyUsername(VerifyUsernameRequest request);
-        public Task<bool> VerifyEmail(VerifyEmailRequest request);
-        public Task<bool> VerifyPassword(VerifyPasswordRequest request);
+        public Task<bool> VerifyUsername(string username);
+        public Task<bool> VerifyEmail(string email);
+        public Task<bool> VerifyPassword(string password);
 
         public Task<bool> iForgotMyPassword(iForgotMyPasswordRequest request);
-        public Task<bool> ChangePassword(ChangePasswordRequest request);
+        public Task ChangePassword(string encryptedPassword);
     }
 }

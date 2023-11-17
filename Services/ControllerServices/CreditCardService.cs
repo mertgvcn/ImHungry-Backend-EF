@@ -1,106 +1,69 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Npgsql;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using ImHungryBackendER;
+using ImHungryBackendER.Models.ParameterModels;
+using ImHungryBackendER.Models.ViewModels;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Data;
-using WebAPI_Giris.Models.Parameters.CreditCardParams;
+using WebAPI_Giris.Models;
 using WebAPI_Giris.Services.ControllerServices.Interfaces;
-using WebAPI_Giris.Services.OtherServices.Interfaces;
 
 namespace WebAPI_Giris.Services.ControllerServices
 {
     public class CreditCardService : ICreditCardService
     {
-        private readonly IUserService userService;
-        private readonly IDbService dbService;
-        private readonly IHttpContextAccessor httpContextAccessor;
+        private readonly ImHungryContext _context;
+        private readonly IMapper _mapper;
+        private readonly IUserService _userService;
 
-        public CreditCardService(IDbService dbService, IUserService userService, IHttpContextAccessor httpContextAccessor)
+        public CreditCardService(ImHungryContext context, IMapper mapper, IUserService userService)
         {
-            this.dbService = dbService;
-            this.userService = userService;
-            this.httpContextAccessor = httpContextAccessor;
+            _context = context;
+            _mapper = mapper;
+            _userService = userService;
         }
 
         public async Task<JsonResult> GetUserCreditCards()
         {
-            DataTable dataTable = new DataTable();
+            var userID = _userService.GetCurrentUserID();
+            var userCreditCards = _context.Users
+                                     .Where(user => user.Id == userID)
+                                     .Include(a => a.CreditCards).FirstOrDefault()!.CreditCards.AsQueryable()
+                                     .ProjectTo<CreditCardViewModel>(_mapper.ConfigurationProvider)
+                                     .ToList();
 
-            int userID = userService.GetCurrentUserID();
-            string query = "select * " +
-               "from \"User_cc\" " +
-               "where \"userID\"=@userID";
+            return new JsonResult(userCreditCards);
+        }
 
-            await dbService.CheckConnectionAsync();
-
-            NpgsqlCommand cmd = new NpgsqlCommand(query, dbService.GetConnection());
-            cmd.Parameters.AddWithValue("@userID", userID);
-
-            try
+        public async Task AddCreditCard(AddCreditCardRequest request)
+        {
+            var newCreditCard = new CreditCard()
             {
-                using (NpgsqlDataReader reader = await cmd.ExecuteReaderAsync())
-                {
-                    dataTable.Load(reader);
-                }
-            }
-            catch (Exception e)
-            {
-                this.httpContextAccessor.HttpContext.Response.StatusCode = 400;
-                throw new SystemException(e.StackTrace);
-            }
-
-            var data = new
-            {
-                userCreditCards = dataTable
+                Number = request.creditCardNumber,
+                HolderName = request.creditCardHolderName,
+                ExpirationDate = request.expirationDate,
+                CVV = request.cvv
             };
+            
+            var userID = _userService.GetCurrentUserID();
+            var user = _context.Users.Where(a => a.Id == userID).Include(a => a.CreditCards).FirstOrDefault();
+            var userCreditCards = user.CreditCards;
 
-            return new JsonResult(data);
+            if (userCreditCards is null)          
+                userCreditCards = new List<CreditCard>() { newCreditCard };
+            else 
+                userCreditCards.Add(newCreditCard);
+
+            await _context.SaveChangesAsync();
         }
 
-        public async Task<bool> AddCreditCard(AddCreditCardRequest request)
+        public async Task DeleteCreditCardByID(long creditCardID)
         {
-            int userID = userService.GetCurrentUserID();
-            string query = "insert into \"User_cc\" (\"ccNo\",\"ccName\",\"expirationDate\",\"cvv\",\"userID\") " +
-                                            "values (@ccNo, @ccName, @expirationDate, @cvv, @userID)";
+            var creditCard = _context.CreditCards.Where(a => a.Id == creditCardID).FirstOrDefault();
 
-            await dbService.CheckConnectionAsync();
-
-            NpgsqlCommand cmd = new NpgsqlCommand(query, dbService.GetConnection());
-            cmd.Parameters.AddWithValue("@userID", userID);
-            cmd.Parameters.AddWithValue("@ccNo", request.creditCardNumber);
-            cmd.Parameters.AddWithValue("@ccName", request.creditCardHolderName);
-            cmd.Parameters.AddWithValue("@expirationDate", request.expirationDate);
-            cmd.Parameters.AddWithValue("@cvv", request.cvv);
-
-            try
-            {
-                await cmd.ExecuteNonQueryAsync();
-                return true;
-            }
-            catch (Exception e)
-            {
-                this.httpContextAccessor.HttpContext.Response.StatusCode = 400;
-                throw new SystemException(e.StackTrace);
-            }
-        }
-
-        public async Task<bool> DeleteCreditCardByID(int creditCardID)
-        {
-            string query = "delete from \"User_cc\" where \"ccID\"=@ccID;";
-
-            await dbService.CheckConnectionAsync();
-
-            NpgsqlCommand cmd = new NpgsqlCommand(query, dbService.GetConnection());
-            cmd.Parameters.AddWithValue("@ccID", creditCardID);
-
-            try
-            {
-                await cmd.ExecuteNonQueryAsync();
-                return true;
-            }
-            catch (Exception e)
-            {
-                this.httpContextAccessor.HttpContext.Response.StatusCode = 400;
-                throw new SystemException(e.StackTrace);
-            }
+            _context.CreditCards.Remove(creditCard);
+            await _context.SaveChangesAsync();
         }
     }
 }

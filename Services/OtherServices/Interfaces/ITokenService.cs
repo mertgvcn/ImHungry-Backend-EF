@@ -1,4 +1,4 @@
-﻿using WebAPI_Giris.Models.Parameters.TokenParams;
+﻿using ImHungryBackendER.Models.ParameterModels;
 
 namespace WebAPI_Giris.Services.OtherServices.Interfaces
 {

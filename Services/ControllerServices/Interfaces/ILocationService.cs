@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using WebAPI_Giris.Models.Parameters.LocationParams;
+﻿using ImHungryBackendER.Models.ParameterModels;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI_Giris.Services.ControllerServices.Interfaces
 {
@@ -7,7 +7,7 @@ namespace WebAPI_Giris.Services.ControllerServices.Interfaces
     {
         public Task<JsonResult> GetUserLocationList();
 
-        public Task<bool> AddLocation(AddLocationRequest request);
-        public Task<bool> DeleteLocationByLocationID(int locationID);
+        public Task AddLocation(AddLocationRequest request);
+        public Task DeleteLocationByLocationID(long locationID);
     }
 }

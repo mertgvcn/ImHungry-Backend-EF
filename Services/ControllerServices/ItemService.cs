@@ -1,57 +1,41 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Npgsql;
-using System.Data;
-using WebAPI_Giris.Models.Parameters.ItemParams;
+﻿using ImHungryBackendER;
+using ImHungryBackendER.Models.ParameterModels;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Net.NetworkInformation;
 using WebAPI_Giris.Services.ControllerServices.Interfaces;
-using WebAPI_Giris.Services.OtherServices.Interfaces;
 
 namespace WebAPI_Giris.Services.ControllerServices
 {
     public class ItemService : IItemService
     {
-        private readonly IDbService dbService;
-        private readonly IHttpContextAccessor httpContextAccessor;
+        private readonly ImHungryContext _context;
 
-        public ItemService(IDbService dbService, IHttpContextAccessor httpContextAccessor)
+        public ItemService(ImHungryContext context)
         {
-            this.dbService = dbService;
-            this.httpContextAccessor = httpContextAccessor;
+            _context = context;
         }
 
         public async Task<JsonResult> GetItemIngredients(int itemID)
         {
             List<GetItemIngredientResponse> ingredients = new List<GetItemIngredientResponse>();
 
-            string query = "select \"ingredientName\" " +
-                           "from \"Item_ingredients\" " +
-                           "natural join \"Ingredient\" " +
-                           "where \"itemID\"=@itemID;";
+            var ingredientNameList = _context.Items
+                                        .Where(item => item.Id == itemID)
+                                        .Include(a => a.Ingredients).FirstOrDefault()!.Ingredients.AsQueryable()
+                                        .Select(a => a.Name)
+                                        .ToList();
 
-            await dbService.CheckConnectionAsync();
-
-            NpgsqlCommand cmd = new NpgsqlCommand(query, dbService.GetConnection());
-            cmd.Parameters.AddWithValue("@itemID", itemID);
-
-            try
+            ingredientNameList.ForEach( ingredientName =>
             {
-                using (NpgsqlDataReader reader = await cmd.ExecuteReaderAsync())
-                {
-                    while(await reader.ReadAsync())
+                ingredients.Add(
+                    new GetItemIngredientResponse
                     {
-                        ingredients.Add(new GetItemIngredientResponse 
-                        { 
-                            name = (string)reader["ingredientName"], 
-                            isActive = true 
-                        });
-
+                        name = ingredientName,
+                        isActive = true
                     }
-                }
-            }
-            catch(Exception ex)
-            {
-                httpContextAccessor.HttpContext.Response.StatusCode = 400;
-                throw new SystemException(ex.StackTrace);
-            }
+                );
+            });
 
             return new JsonResult(ingredients);
         }

@@ -1,9 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using ImHungryBackendER.Models.ParameterModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Npgsql;
-using WebAPI_Giris.Models;
-using WebAPI_Giris.Models.Parameters.AuthParams;
-using WebAPI_Giris.Services;
 using WebAPI_Giris.Services.OtherServices.Interfaces;
 
 namespace WebAPI_Giris.Controllers
@@ -30,7 +27,7 @@ namespace WebAPI_Giris.Controllers
 
         [HttpPost("register")]
         [AllowAnonymous]
-        public async Task<ActionResult<UserRegisterResponse>> Register(Users user)
+        public async Task<ActionResult<UserRegisterResponse>> Register(UserRegisterRequest user)
         {
             var result = await authService.RegisterUserAsync(user);
 

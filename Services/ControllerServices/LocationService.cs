@@ -1,113 +1,74 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Npgsql;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using ImHungryBackendER;
+using ImHungryBackendER.Models.ParameterModels;
+using ImHungryBackendER.Models.ViewModels;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Data;
 using WebAPI_Giris.Models;
-using WebAPI_Giris.Models.Parameters.LocationParams;
 using WebAPI_Giris.Services.ControllerServices.Interfaces;
-using WebAPI_Giris.Services.OtherServices.Interfaces;
 
 namespace WebAPI_Giris.Services.ControllerServices
 {
     public class LocationService : ILocationService
     {
-        private readonly IDbService dbService;
-        private readonly IUserService userService;
-        private readonly IHttpContextAccessor httpContextAccessor;
+        private readonly ImHungryContext _context;
+        private readonly IUserService _userService;
+        private readonly IMapper _mapper;
 
-        public LocationService(IDbService dbService, IUserService userService, IHttpContextAccessor httpContextAccessor)
+        public LocationService(ImHungryContext context, IMapper mapper, IUserService userService)
         {
-            this.dbService = dbService;
-            this.userService = userService;
-            this.httpContextAccessor = httpContextAccessor;
+            _context = context;
+            _mapper = mapper;
+            _userService = userService;
         }
 
         public async Task<JsonResult> GetUserLocationList()
         {
-            DataTable dataTable = new DataTable();
+            var userID = _userService.GetCurrentUserID();
+            var userLocationList = _context.Users
+                                      .Where(user => user.Id == userID)
+                                      .Include(a => a.Locations).FirstOrDefault()!.Locations.AsQueryable()
+                                      .ProjectTo<LocationViewModel>(_mapper.ConfigurationProvider)
+                                      .ToList();
 
-            int userID = userService.GetCurrentUserID();
-            string query = "select * " +
-               "from \"User_location\" " +
-               "where \"userID\"=@userID";
+            return new JsonResult(userLocationList);
+        }
 
-
-            await dbService.CheckConnectionAsync();
-
-            NpgsqlCommand cmd = new NpgsqlCommand(query, dbService.GetConnection());
-            cmd.Parameters.AddWithValue("@userID", userID);
-
-            try
+        public async Task AddLocation(AddLocationRequest request)
+        {
+            var newLocation = new UserLocation()
             {
-                using(NpgsqlDataReader reader = await cmd.ExecuteReaderAsync())
-                {
-                    dataTable.Load(reader);
-                }
-            }
-            catch (Exception e)
-            {
-                this.httpContextAccessor.HttpContext.Response.StatusCode = 400;
-                throw new SystemException(e.StackTrace);
-            }
-
-            var data = new
-            {
-                userLocations = dataTable
+                Title = request.locationTitle,
+                Province = request.province,
+                District = request.district,
+                Neighbourhood = request.neighbourhood,
+                Street = request.street,
+                BuildingNo = request.buildingNo,
+                BuildingAddition = request.buildingAddition,
+                ApartmentNo = request.apartmentNo,
+                Note = request.note,
             };
 
-            return new JsonResult(data);
+            var userID = _userService.GetCurrentUserID();
+            var user = _context.Users.Where(a => a.Id == userID).Include(a => a.Locations).FirstOrDefault();
+            var userLocations = user.Locations;
+
+            if (userLocations is null)
+                userLocations = new List<UserLocation>() { newLocation };
+            else
+                userLocations.Add(newLocation);
+ 
+            await _context.SaveChangesAsync();
         }
 
-        public async Task<bool> AddLocation(AddLocationRequest request)
+        public async Task DeleteLocationByLocationID(long locationID)
         {
-            int userID = userService.GetCurrentUserID();
-            string query = $"insert into \"User_location\" (\"userID\",\"locationTitle\",\"province\",\"district\",\"neighbourhood\",\"street\",\"buildingNo\",\"buildingAddition\",\"apartmentNo\",\"note\") " +
-                                                  $"values (@userID, @locationTitle, @province, @district, @neighbourhood, @street, @buildingNo, @buildingAddition, @apartmentNo, @note);";
+            var location = _context.UserLocations.Where(a => a.Id == locationID).FirstOrDefault();
 
-            await dbService.CheckConnectionAsync();
-
-            NpgsqlCommand cmd = new NpgsqlCommand(query, dbService.GetConnection());
-            cmd.Parameters.AddWithValue("@userID", userID);
-            cmd.Parameters.AddWithValue("@locationTitle", request.locationTitle);
-            cmd.Parameters.AddWithValue("@province", request.province);
-            cmd.Parameters.AddWithValue("@district", request.district);
-            cmd.Parameters.AddWithValue("@neighbourhood", request.neighbourhood);
-            cmd.Parameters.AddWithValue("@street", request.street);
-            cmd.Parameters.AddWithValue("@buildingNo", request.buildingNo);
-            cmd.Parameters.AddWithValue("@buildingAddition", request.buildingAddition);
-            cmd.Parameters.AddWithValue("@apartmentNo", request.apartmentNo);
-            cmd.Parameters.AddWithValue("@note", request.note);
-
-            try
-            {
-                await cmd.ExecuteNonQueryAsync();
-                return true;
-            }
-            catch (Exception e)
-            {
-                this.httpContextAccessor.HttpContext.Response.StatusCode = 400;
-                throw new SystemException(e.StackTrace);
-            }
-        }
-
-        public async Task<bool> DeleteLocationByLocationID(int locationID)
-        {
-            string query = "delete from \"User_location\" where \"locationID\"=@locationID;";
-
-            await dbService.CheckConnectionAsync();
-
-            NpgsqlCommand cmd = new NpgsqlCommand(query, dbService.GetConnection());
-            cmd.Parameters.AddWithValue("@locationID", locationID);
-
-            try
-            {
-                await cmd.ExecuteNonQueryAsync();
-                return true;
-            }
-            catch (Exception e)
-            {
-                this.httpContextAccessor.HttpContext.Response.StatusCode = 400;
-                throw new SystemException(e.StackTrace);
-            }
+            _context.UserLocations.Remove(location);
+            await _context.SaveChangesAsync();
         }
     }
 }

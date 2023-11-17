@@ -12,8 +12,17 @@ using WebAPI_Giris.Services.OtherServices.Interfaces;
 using WebAPI_Giris.Services.OtherServices;
 using WebAPI_Giris.Services.ControllerServices.Interfaces;
 using WebAPI_Giris.Services.ControllerServices;
+using Microsoft.EntityFrameworkCore;
+using ImHungryBackendER;
+using AutoMapper;
+using ImHungryBackendER.Services.OtherServices.Interfaces;
+using ImHungryBackendER.Services.OtherServices;
 
 var builder = WebApplication.CreateBuilder(args);
+
+//Entity Framework Context Connection
+builder.Services.AddDbContext<ImHungryContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("default"), b => b.MigrationsAssembly("ImHungryLibrary")));
 
 // Json Serializer
 builder.Services.AddControllersWithViews().AddNewtonsoftJson(options =>
@@ -44,7 +53,6 @@ builder.Services.AddSwaggerGen(options =>
     options.OperationFilter<SecurityRequirementsOperationFilter>();
 });
 
-builder.Services.AddSingleton<IDbService, DbService>();
 builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddTransient<ICryptionService, CryptionService>();
 builder.Services.AddTransient<ITokenService, TokenService>();
@@ -54,6 +62,8 @@ builder.Services.AddTransient<ILocationService, LocationService>();
 builder.Services.AddTransient<ICreditCardService, CreditCardService>();
 builder.Services.AddTransient<ICartService, CartService>();
 builder.Services.AddTransient<IItemService, ItemService>();
+builder.Services.AddTransient<IDbOperationHelperService, DbOperationHelperService>();
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()); //need for automapper
 
 builder.Services.AddAuthentication(options =>
 {
@@ -78,10 +88,6 @@ builder.Services.AddAuthorization();
 builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
-
-//open connection at beginng.
-var dbService = app.Services.GetService<IDbService>();
-await dbService.OpenConnectionAsync();
 
 //enable cors devamý
 app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());

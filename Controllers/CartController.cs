@@ -1,16 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using ImHungryBackendER.Models.ParameterModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.OpenApi.Any;
-using Newtonsoft.Json;
-using Npgsql;
-using System.Data;
-using System.Diagnostics;
-using WebAPI_Giris.Models;
-using WebAPI_Giris.Models.Parameters.CartParams;
-using WebAPI_Giris.Services.ControllerServices;
 using WebAPI_Giris.Services.ControllerServices.Interfaces;
-using WebAPI_Giris.Services.OtherServices.Interfaces;
-using WebAPI_Giris.Types;
 
 namespace WebAPI_Giris.Controllers
 {
@@ -21,14 +12,10 @@ namespace WebAPI_Giris.Controllers
     public class CartController : Controller
     {
         private readonly ICartService cartService;
-        private readonly IDbService dbService;
 
-        public CartController(ICartService cartService, IDbService dbService)
+        public CartController(ICartService cartService)
         {
-            this.cartService = cartService;
-            this.dbService = dbService;
-
-            AppDomain.CurrentDomain.ProcessExit += HandleProcessExit; //runs on exit     
+            this.cartService = cartService; 
         }
 
         [HttpGet("GetCartInfo")]
@@ -52,21 +39,17 @@ namespace WebAPI_Giris.Controllers
         [HttpPost("AddItemToCart")]
         public async Task<bool> AddItemToCart([FromBody] CartTransactionRequest request)
         {
+            if (request.ingredients == "") request.ingredients = null;
+
             return await cartService.AddItemToCart(request);
         }
 
         [HttpDelete("DeleteItemFromCart")]
-        public async Task<bool> DeleteItemFromCart([FromQuery] CartTransactionRequest request)
+        public async Task<bool> DeleteItemFromCart([FromQuery] CartTransactionRequest request, [FromQuery] long cartItemID)
         {
-            if(request.ingredients == "boş") request.ingredients = "";
-            return await cartService.DeleteItemFromCart(request);
-        }
+            if(request.ingredients == "") request.ingredients = null;
 
-        //Support
-        [NonAction]
-        private void HandleProcessExit(object sender, EventArgs e)
-        {
-            dbService.CloseConnection();
+            return await cartService.DeleteItemFromCart(request, cartItemID);
         }
     }
 }

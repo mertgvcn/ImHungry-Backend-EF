@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\mertg\\source\\repos\\WebAPI_Giris\\WebAPI_Giris.csproj": {}
+    "C:\\Users\\mertg\\source\\repos\\ImHungry-Backend-ER\\WebAPI_Giris.csproj": {}
   },
   "projects": {
-    "C:\\Users\\mertg\\source\\repos\\WebAPI_Giris\\WebAPI_Giris.csproj": {
+    "C:\\Users\\mertg\\source\\repos\\ImHungry-Backend-ER\\WebAPI_Giris.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\mertg\\source\\repos\\WebAPI_Giris\\WebAPI_Giris.csproj",
+        "projectUniqueName": "C:\\Users\\mertg\\source\\repos\\ImHungry-Backend-ER\\WebAPI_Giris.csproj",
         "projectName": "WebAPI_Giris",
-        "projectPath": "C:\\Users\\mertg\\source\\repos\\WebAPI_Giris\\WebAPI_Giris.csproj",
+        "projectPath": "C:\\Users\\mertg\\source\\repos\\ImHungry-Backend-ER\\WebAPI_Giris.csproj",
         "packagesPath": "C:\\Users\\mertg\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\mertg\\source\\repos\\WebAPI_Giris\\obj\\",
+        "outputPath": "C:\\Users\\mertg\\source\\repos\\ImHungry-Backend-ER\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\mertg\\AppData\\Roaming\\NuGet\\NuGet.Config",

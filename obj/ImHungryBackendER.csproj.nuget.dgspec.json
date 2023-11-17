@@ -1,0 +1,210 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\mertg\\source\\repos\\ImHungry-Backend-ER\\ImHungryBackendER.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\mertg\\source\\repos\\ImHungry-Backend-ER\\ImHungryBackendER.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\mertg\\source\\repos\\ImHungry-Backend-ER\\ImHungryBackendER.csproj",
+        "projectName": "ImHungryBackendER",
+        "projectPath": "C:\\Users\\mertg\\source\\repos\\ImHungry-Backend-ER\\ImHungryBackendER.csproj",
+        "packagesPath": "C:\\Users\\mertg\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\mertg\\source\\repos\\ImHungry-Backend-ER\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\mertg\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net7.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\sdk\\7.0.304\\Sdks\\Microsoft.NET.Sdk.Web\\library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net7.0": {
+            "targetAlias": "net7.0",
+            "projectReferences": {
+              "C:\\Users\\mertg\\source\\repos\\ImHungryLibrary\\ImHungryLibrary.csproj": {
+                "projectPath": "C:\\Users\\mertg\\source\\repos\\ImHungryLibrary\\ImHungryLibrary.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net7.0": {
+          "targetAlias": "net7.0",
+          "dependencies": {
+            "AutoMapper": {
+              "target": "Package",
+              "version": "[12.0.1, )"
+            },
+            "AutoMapper.Extensions.Microsoft.DependencyInjection": {
+              "target": "Package",
+              "version": "[12.0.1, )"
+            },
+            "BCrypt.Net-Next": {
+              "target": "Package",
+              "version": "[4.0.3, )"
+            },
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[7.0.11, )"
+            },
+            "Microsoft.AspNetCore.Mvc.NewtonsoftJson": {
+              "target": "Package",
+              "version": "[7.0.8, )"
+            },
+            "Microsoft.AspNetCore.OpenApi": {
+              "target": "Package",
+              "version": "[7.0.7, )"
+            },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[6.0.1, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[6.0.1, )"
+            },
+            "Microsoft.EntityFrameworkCore.Relational": {
+              "target": "Package",
+              "version": "[6.0.1, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[6.0.1, )"
+            },
+            "Npgsql.EntityFrameworkCore.PostgreSQL": {
+              "target": "Package",
+              "version": "[6.0.1, )"
+            },
+            "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[6.5.0, )"
+            },
+            "Swashbuckle.AspNetCore.Filters": {
+              "target": "Package",
+              "version": "[7.0.11, )"
+            },
+            "TypeSupport": {
+              "target": "Package",
+              "version": "[1.2.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.304\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\mertg\\source\\repos\\ImHungryLibrary\\ImHungryLibrary.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\mertg\\source\\repos\\ImHungryLibrary\\ImHungryLibrary.csproj",
+        "projectName": "ImHungryLibrary",
+        "projectPath": "C:\\Users\\mertg\\source\\repos\\ImHungryLibrary\\ImHungryLibrary.csproj",
+        "packagesPath": "C:\\Users\\mertg\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\mertg\\source\\repos\\ImHungryLibrary\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\mertg\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net7.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net7.0": {
+            "targetAlias": "net7.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net7.0": {
+          "targetAlias": "net7.0",
+          "dependencies": {
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[6.0.1, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[6.0.1, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[6.0.1, )"
+            },
+            "Npgsql.EntityFrameworkCore.PostgreSQL": {
+              "target": "Package",
+              "version": "[6.0.1, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.304\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

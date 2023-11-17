@@ -1,25 +1,40 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Npgsql;
+﻿using AutoMapper;
+using AutoMapper.Internal;
+using AutoMapper.QueryableExtensions;
+using ImHungryBackendER;
+using ImHungryBackendER.Models.ParameterModels;
+using ImHungryBackendER.Models.ViewModels;
+using ImHungryBackendER.Services.OtherServices.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using WebAPI_Giris.Models;
-using WebAPI_Giris.Models.Parameters.UserParams;
 using WebAPI_Giris.Services.ControllerServices.Interfaces;
-using WebAPI_Giris.Services.OtherServices;
 using WebAPI_Giris.Services.OtherServices.Interfaces;
 
 namespace WebAPI_Giris.Services.ControllerServices
 {
     public class UserService : IUserService
     {
-        private readonly IDbService dbService;
-        private readonly ICryptionService cryptionService;
-        private readonly IHttpContextAccessor httpContextAccessor;
+        private readonly ImHungryContext _context;
+        private readonly IMapper _mapper;
+        private readonly IDbOperationHelperService _dbOperationHelperService;
+        private readonly ICryptionService _cryptionService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UserService(IDbService dbService, ICryptionService cryptionService, IHttpContextAccessor httpContextAccessor)
+        public UserService(
+            ImHungryContext context, 
+            IMapper mapper,
+            IDbOperationHelperService dbOperationHelperService,
+            ICryptionService cryptionService, 
+            IHttpContextAccessor httpContextAccessor
+            )
         {
-            this.dbService = dbService;
-            this.cryptionService = cryptionService;
-            this.httpContextAccessor = httpContextAccessor;
+            _context = context;
+            _mapper = mapper;
+            _dbOperationHelperService = dbOperationHelperService;
+            _cryptionService = cryptionService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         //Get general user informations
@@ -27,7 +42,7 @@ namespace WebAPI_Giris.Services.ControllerServices
         {
             var accountInfo = await GetAccountInfo();
             var currentLocation = await GetCurrentLocation();
-
+            
             var userInfo = new
             {
                 accountInfo = accountInfo.Value,
@@ -37,16 +52,15 @@ namespace WebAPI_Giris.Services.ControllerServices
             return new JsonResult(userInfo);
         }
 
-
         //Get user id from claim that inside the api token
-        public int GetCurrentUserID()
+        public long GetCurrentUserID()
         {
-            if (httpContextAccessor.HttpContext is not null)
+            if (_httpContextAccessor.HttpContext is not null)
             {
-                var result = httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var result = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
                 return int.Parse(result);
             }
-
+            
             return -1;
         }
 
@@ -54,321 +68,116 @@ namespace WebAPI_Giris.Services.ControllerServices
         //Get account info, not include password
         public async Task<JsonResult> GetAccountInfo()
         {
-            JsonResult jsonResult = new JsonResult(null);
+            var accountInfo = _context.Users.Where(user => user.Id == GetCurrentUserID())
+                                 .ProjectTo<UserAccountViewModel>(_mapper.ConfigurationProvider).FirstOrDefault();
 
-            int userID = GetCurrentUserID();
-            string query = "select \"firstName\",\"lastName\",\"userName\",\"email\",\"phoneNumber\" from \"Users\" where \"userID\"=@userID";
-
-            await dbService.CheckConnectionAsync();
-
-            NpgsqlCommand cmd = new NpgsqlCommand(query, dbService.GetConnection());
-            cmd.Parameters.AddWithValue("@userID", userID);
-
-            try
-            {
-                using(NpgsqlDataReader reader = await cmd.ExecuteReaderAsync())
-                {
-                    if (await reader.ReadAsync())
-                    {
-                        var accountInfo = new
-                        {
-                            firstName = (string)reader["firstName"],
-                            lastName = (string)reader["lastName"],
-                            userName = (string)reader["userName"],
-                            email = (string)reader["email"],
-                            phoneNumber = (string)reader["phoneNumber"],
-                        };
-
-                        jsonResult = new JsonResult(accountInfo);
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                if(httpContextAccessor.HttpContext is not null) 
-                    this.httpContextAccessor.HttpContext.Response.StatusCode = 400;
-                throw new SystemException(e.StackTrace);
-            }
-
-            return jsonResult;
+            return new JsonResult(accountInfo);
         }
 
-        public async Task<bool> SetAccountInfo(SetAccountInfoRequest request)
+        public async Task SetAccountInfo(UserAccountViewModel request)
         {
-            int userID = GetCurrentUserID();
-            string query = $"update \"Users\" " +
-               $"set \"firstName\" = @firstName, \"lastName\"= @lastName, \"userName\"=@userName, \"email\"= @email, \"phoneNumber\"= @phoneNumber " +
-               $"where \"userID\" = @userID;";
-
-            await dbService.CheckConnectionAsync();
-
-            NpgsqlCommand cmd = new NpgsqlCommand(query, dbService.GetConnection());
-            cmd.Parameters.AddWithValue("@firstName", request.firstName);
-            cmd.Parameters.AddWithValue("@lastName", request.lastName);
-            cmd.Parameters.AddWithValue("@userName", request.userName);
-            cmd.Parameters.AddWithValue("@email", request.email);
-            cmd.Parameters.AddWithValue("@phoneNumber", request.phoneNumber);
-            cmd.Parameters.AddWithValue("@userID", userID);
-
-            try
+            User user = new User()
             {
-                await cmd.ExecuteNonQueryAsync();
-                return true;
-            }
-            catch (Exception e)
-            {
-                if (httpContextAccessor.HttpContext is not null) 
-                    this.httpContextAccessor.HttpContext.Response.StatusCode = 400;
-                throw new SystemException(e.StackTrace);
-            }
+                Id = GetCurrentUserID(),
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                Username = request.Username,
+                Email = request.Email,
+                PhoneNumber = request.PhoneNumber,
+             };
+
+            _context.Update(user);
+            _dbOperationHelperService.MarkModifiedProperties<User>(user, _context);
+            await _context.SaveChangesAsync();
         }
-
 
         //Get current location of user, may be null.
         public async Task<JsonResult> GetCurrentLocation()
         {
-            JsonResult jsonResult = new JsonResult(null);
+            var userID = GetCurrentUserID();
+            var currentLocation = _context.Users.Where(user => user.Id == userID)
+                                    .Include(a => a.CurrentLocation).Select(a => a.CurrentLocation)
+                                    .ProjectTo<LocationViewModel>(_mapper.ConfigurationProvider).FirstOrDefault();
 
-            int userID = GetCurrentUserID();
-            string query = "select \"locationTitle\",\"province\",\"district\",\"neighbourhood\",\"street\",\"buildingNo\",\"buildingAddition\",\"apartmentNo\",\"note\" " +
-               "from \"Users\" " +
-               "natural join \"User_location\" " +
-               "where \"userID\"=@userID";
-
-            await dbService.CheckConnectionAsync();
-
-            NpgsqlCommand cmd = new NpgsqlCommand(query, dbService.GetConnection());
-            cmd.Parameters.AddWithValue("@userID", userID);
-
-            try
-            {
-                using(NpgsqlDataReader reader = await cmd.ExecuteReaderAsync()) {
-                    if (await reader.ReadAsync())
-                    {
-                        var currentLocation = new
-                        {
-                            locationTitle = (string)reader["locationTitle"],
-                            province = (string)reader["province"],
-                            district = (string)reader["district"],
-                            neighbourhood = (string)reader["neighbourhood"],
-                            street = (string)reader["street"],
-                            buildingNo = (string)reader["buildingNo"],
-                            buildingAddition = (string)reader["buildingAddition"],
-                            apartmentNo = (string)reader["apartmentNo"],
-                            note = (string)reader["note"],
-                        };
-
-                        jsonResult = new JsonResult(currentLocation);
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                if (httpContextAccessor.HttpContext is not null) 
-                    this.httpContextAccessor.HttpContext.Response.StatusCode = 400;
-                throw new SystemException(e.StackTrace);
-            }
-
-            return jsonResult;
+            return new JsonResult(currentLocation);
         }
 
-        public async Task<bool> SetCurrentLocation(SetCurrentLocationRequest request)
+        public async Task SetCurrentLocation(long locationID)
         {
-            int userID = GetCurrentUserID();
+            var userID = GetCurrentUserID();
+            var newCurrentLocation = _context.UserLocations.Where(a => a.Id == locationID).FirstOrDefault();
 
-            if (request.locationID < 0)
+            User user = new User()
             {
-                request.locationID = null;
-            }
+                Id = userID,
+                CurrentLocation = newCurrentLocation,
+            };
 
-            string query = $"update \"Users\" " +
-                           $"set \"locationID\" = @locationID " +
-                           $"where \"userID\" = @userID;";
+            _context.Update(user);
+            _dbOperationHelperService.MarkModifiedProperties<User>(user, _context);
 
-            await dbService.CheckConnectionAsync();
+            //in mark modified properties if property is null, it marks at nonmodified. So need to check it.
+            if (newCurrentLocation == null)
+                _context.Entry(user).Reference(a => a.CurrentLocation).IsModified = true;
 
-            NpgsqlCommand cmd = new NpgsqlCommand(query, dbService.GetConnection());
-            cmd.Parameters.AddWithValue("@locationID", request.locationID);
-            cmd.Parameters.AddWithValue("@userID", userID);
-
-            try
-            {
-                await cmd.ExecuteNonQueryAsync();
-                return true;
-            }
-            catch (Exception e)
-            {
-                if (httpContextAccessor.HttpContext is not null) 
-                    this.httpContextAccessor.HttpContext.Response.StatusCode = 400;
-                throw new SystemException(e.StackTrace);
-            }
+            await _context.SaveChangesAsync();
         }
-
 
         //Check db if username and email exists
-        public async Task<bool> VerifyUsername(VerifyUsernameRequest request)
+        public async Task<bool> VerifyUsername(string username)
         {
-            string query = "select \"userName\" from \"Users\" where \"userName\"=@username";
+            var user = _context.Users.Where(a => a.Username == username).FirstOrDefault();
 
-            await dbService.CheckConnectionAsync();
-
-            NpgsqlCommand cmd = new NpgsqlCommand(query, dbService.GetConnection());
-            cmd.Parameters.AddWithValue("@username", request.username);
-
-            try
-            {
-                using (NpgsqlDataReader reader = await cmd.ExecuteReaderAsync())
-                {
-                    if (await reader.ReadAsync()) //if username exists on db, return true
-                    {
-                        return true;
-                    }
-
-                    return false;
-                }
-            }
-            catch (Exception e)
-            {
-                if (httpContextAccessor.HttpContext is not null) 
-                    this.httpContextAccessor.HttpContext.Response.StatusCode = 400;
-                throw new SystemException(e.StackTrace);
-            }
+            return (user == null) ? false : true;
         }
 
-        public async Task<bool> VerifyEmail(VerifyEmailRequest request)
+        public async Task<bool> VerifyEmail(string email)
         {
-            string query = "select \"email\" from \"Users\" where \"email\"=@email";
+            var user = _context.Users.Where(a => a.Email == email).FirstOrDefault();
 
-            await dbService.CheckConnectionAsync();
-
-            NpgsqlCommand cmd = new NpgsqlCommand(query, dbService.GetConnection());
-            cmd.Parameters.AddWithValue("@email", request.email);
-
-            try
-            {
-                using (NpgsqlDataReader reader = await cmd.ExecuteReaderAsync())
-                {
-                    if (await reader.ReadAsync())
-                    {
-                        return true;
-                    }
-
-                    return false;
-                }
-            }
-            catch (Exception e)
-            {
-                if (httpContextAccessor.HttpContext is not null) 
-                    this.httpContextAccessor.HttpContext.Response.StatusCode = 400;
-                throw new SystemException(e.StackTrace);
-            }
+            return (user == null) ? false : true;
         }
 
-        public async Task<bool> VerifyPassword(VerifyPasswordRequest request)
+        public async Task<bool> VerifyPassword(string plainPassword)
         {
-            int userID = GetCurrentUserID();
-            string query = "select \"password\" from \"Users\" where \"userID\"=@userID";
+            var userID = GetCurrentUserID();
+            var user = _context.Users.Where(user => user.Id == userID).FirstOrDefault();
 
-            await dbService.CheckConnectionAsync();
-
-            NpgsqlCommand cmd = new NpgsqlCommand(query, dbService.GetConnection());
-            cmd.Parameters.AddWithValue("@userID", userID);
-
-            try
-            {
-                using (NpgsqlDataReader reader = await cmd.ExecuteReaderAsync())
-                {
-                    //valid userID
-                    if (await reader.ReadAsync())
-                    {
-                        string hashedPassword = (string)reader["password"]; //password in db
-
-                        bool isMatch = BCrypt.Net.BCrypt.Verify(request.password, hashedPassword); //Checks password is valid or not
-                        return isMatch;
-                    }
-
-                    //wrong userID
-                    return false;
-                }
-            }
-            catch (Exception e)
-            {
-                if (httpContextAccessor.HttpContext is not null) 
-                    this.httpContextAccessor.HttpContext.Response.StatusCode = 400;
-                throw new SystemException(e.StackTrace);
-            }
+            return (user==null) ? false : BCrypt.Net.BCrypt.Verify(plainPassword, user.Password); //user.Password is hashed password
         }
-
 
         //Password operations
         public async Task<bool> iForgotMyPassword(iForgotMyPasswordRequest request)
         {
-            bool isValidEmail = await VerifyEmail(new VerifyEmailRequest() { email = request.email });
-            dbService.CloseConnection(); //avoid command already in progress error.
-
-            if (isValidEmail)
-            {
-                string query = "update \"Users\" " +
-                               "set \"password\"=@password " +
-                               "where \"email\"=@email;";
-
-                string hashedPassword = BCrypt.Net.BCrypt.HashPassword(request.plainPassword);
-
-                await dbService.CheckConnectionAsync(); //reopen connection
-
-                NpgsqlCommand cmd = new NpgsqlCommand(query, dbService.GetConnection());
-                cmd.Parameters.AddWithValue("@password", hashedPassword);
-                cmd.Parameters.AddWithValue("@email", request.email);
-
-                try
-                {
-                    await cmd.ExecuteNonQueryAsync();
-                    return true;
-                }
-                catch (Exception e)
-                {
-                    if (httpContextAccessor.HttpContext is not null) 
-                        this.httpContextAccessor.HttpContext.Response.StatusCode = 400;
-                    throw new SystemException(e.StackTrace);
-                }
-            }
-            else
-            {
-                if (httpContextAccessor.HttpContext is not null) 
-                    this.httpContextAccessor.HttpContext.Response.StatusCode = 400;
-                return false;
-            }
+            //Mailine yeni şifre gönder
+            return await VerifyEmail(request.Email);
         }
 
-        public async Task<bool> ChangePassword(ChangePasswordRequest request)
+        public async Task ChangePassword(string encryptedPassword)
         {
-            int userID = GetCurrentUserID();
-            string newPassword = cryptionService.Decrypt(request.encryptedPassword);
+            var userID = GetCurrentUserID();
+            //string newPassword = _cryptionService.Decrypt(encryptedPassword); //Convert encrypted password that comes from frontend to plain password
+            string newPassword = BCrypt.Net.BCrypt.HashPassword(encryptedPassword); //password hashing
 
-            //password hashing
-            newPassword = BCrypt.Net.BCrypt.HashPassword(newPassword);
-
-            string query = $"update \"Users\" " +
-                           $"set \"password\"=@newPassword " +
-                           $"where \"userID\"=@userID;";
-
-            await dbService.CheckConnectionAsync();
-
-            NpgsqlCommand cmd = new NpgsqlCommand(query, dbService.GetConnection());
-            cmd.Parameters.AddWithValue("@userID", userID);
-            cmd.Parameters.AddWithValue("@newPassword", newPassword);
-
-            try
+            User user = new User()
             {
-                await cmd.ExecuteNonQueryAsync();
-                return true;
-            }
-            catch (Exception e)
-            {
-                if (httpContextAccessor.HttpContext is not null) 
-                    this.httpContextAccessor.HttpContext.Response.StatusCode = 400;
-                throw new SystemException(e.StackTrace);
-            }
+                Id = userID,
+                Password = newPassword,
+            };
+
+            _context.Update(user);
+            _dbOperationHelperService.MarkModifiedProperties<User>(user, _context);
+            await _context.SaveChangesAsync();
         }
     }
 }
+
+
+
+/*
+ * private readonly IServiceScopeFactory _scopeFactory;
+ * 
+ * Metodlarda kullanarak gereksiz kullanımı engelleriz.
+    var scope = _scopeFactory.CreateScope();
+    var userService = scope.ServiceProvider.GetService<IUserService>();
+ */

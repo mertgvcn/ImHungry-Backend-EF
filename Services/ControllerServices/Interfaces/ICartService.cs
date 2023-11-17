@@ -1,6 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using WebAPI_Giris.Models;
-using WebAPI_Giris.Models.Parameters.CartParams;
+﻿using ImHungryBackendER.Models.ParameterModels;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI_Giris.Services.ControllerServices.Interfaces
 {
@@ -10,12 +9,12 @@ namespace WebAPI_Giris.Services.ControllerServices.Interfaces
         public Task<JsonResult> GetUserCartItemList();
         public Task<int> GetUserCartItemNumber();
         public Task<bool> AddItemToCart(CartTransactionRequest request);
-        public Task<bool> DeleteItemFromCart(CartTransactionRequest request);
+        public Task<bool> DeleteItemFromCart(CartTransactionRequest request, long cartItemID);
 
         public Task<int> getItemAmount(CartTransactionRequest request);
         public Task<bool> isItemExistsOnCart(CartTransactionRequest request);
         public Task<bool> changeAmountOfItem(CartTransactionRequest request);
         public Task<bool> createItemInCart(CartTransactionRequest request);
-        public Task<bool> removeItemInCart(CartTransactionRequest request);
+        public Task<bool> removeItemInCart(long cartItemID);
     }
 }

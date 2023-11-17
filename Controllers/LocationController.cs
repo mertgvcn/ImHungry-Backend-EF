@@ -1,13 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using ImHungryBackendER.Models.ParameterModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Npgsql;
-using System.Data;
-using System.Net;
-using WebAPI_Giris.Models;
-using WebAPI_Giris.Models.Parameters.LocationParams;
 using WebAPI_Giris.Services.ControllerServices.Interfaces;
-using WebAPI_Giris.Services.OtherServices.Interfaces;
 
 namespace WebAPI_Giris.Controllers
 {
@@ -17,14 +11,10 @@ namespace WebAPI_Giris.Controllers
     public class LocationController : Controller
     {
         private readonly ILocationService locationService;
-        private readonly IDbService dbService;
 
-        public LocationController(ILocationService locationService, IDbService dbService)
+        public LocationController(ILocationService locationService)
         {
-            this.locationService = locationService;
-            this.dbService = dbService;
-
-            AppDomain.CurrentDomain.ProcessExit += HandleProcessExit; //runs on exit   
+            this.locationService = locationService;  
         }
 
         [HttpGet("GetUserLocationList")]
@@ -34,22 +24,15 @@ namespace WebAPI_Giris.Controllers
         }
 
         [HttpPost("AddLocation")]
-        public async Task<bool> AddLocation(AddLocationRequest request)
+        public async Task AddLocation([FromBody] AddLocationRequest request)
         {
-            return await locationService.AddLocation(request);
+            await locationService.AddLocation(request);
         }
 
         [HttpDelete("DeleteLocationByLocationID")]
-        public async Task<bool> DeleteLocationByLocationID([FromQuery] int locationID)
+        public async Task DeleteLocationByLocationID([FromQuery] long locationID)
         {
-            return await locationService.DeleteLocationByLocationID(locationID);
-        }
-
-        //Support
-        [NonAction]
-        private void HandleProcessExit(object sender, EventArgs e)
-        {
-            dbService.CloseConnection();
+            await locationService.DeleteLocationByLocationID(locationID);
         }
 
     }

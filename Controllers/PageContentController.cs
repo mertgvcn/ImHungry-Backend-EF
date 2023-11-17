@@ -1,12 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using ImHungryBackendER.Models.ParameterModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using System.Data;
-using WebAPI_Giris.Models;
-using WebAPI_Giris.Models.Parameters.RestaurantParams;
 using WebAPI_Giris.Services.ControllerServices.Interfaces;
 using WebAPI_Giris.Services.OtherServices.Interfaces;
-using WebAPI_Giris.Types;
 
 namespace WebAPI_Giris.Controllers
 {
@@ -15,7 +12,6 @@ namespace WebAPI_Giris.Controllers
     [Authorize]
     public class PageContentController : Controller
     {
-        private readonly IDbService dbService;
         private readonly ICryptionService cryptionService;
         private readonly IUserService userService;
         private readonly IRestaurantService restaurantService;
@@ -23,7 +19,7 @@ namespace WebAPI_Giris.Controllers
         private readonly ICreditCardService creditCardService;
         private readonly ICartService cartService;
 
-        public PageContentController(IDbService dbService, 
+        public PageContentController(
             ICryptionService cryptionService, 
             IUserService userService,
             IRestaurantService restaurantService,
@@ -31,7 +27,6 @@ namespace WebAPI_Giris.Controllers
             ICreditCardService creditCardService,
             ICartService cartService)
         {
-            this.dbService = dbService;
             this.cryptionService = cryptionService;
             this.userService = userService;
             this.restaurantService = restaurantService;
@@ -44,8 +39,8 @@ namespace WebAPI_Giris.Controllers
         [HttpGet("HomePageData")]
         public async Task<JsonResult> HomePageData()
         {
-            UserController u = new UserController(userService, dbService);
-            RestaurantController r = new RestaurantController(restaurantService, dbService);
+            UserController u = new UserController(userService);
+            RestaurantController r = new RestaurantController(restaurantService);
 
             JsonResult user = await u.GetUserInfo();
             JsonResult restaurant = new JsonResult(null);
@@ -53,12 +48,12 @@ namespace WebAPI_Giris.Controllers
 
             //Fetch restaurants if user have location, could be done by another hasLocation request. But its a serialize,deserialize example.
             var serializedUserData = JsonConvert.SerializeObject(user.Value);
-            UserData userData = JsonConvert.DeserializeObject<UserData>(serializedUserData);
+            /*UserData userData = JsonConvert.DeserializeObject<UserData>(serializedUserData);
             if (userData.currentLocation != null)
             {
                 GetRestaurantListByLocationRequest request = new();
-                request.province = userData.currentLocation.province;
-                request.district = userData.currentLocation.district;
+                request.Province = userData.currentLocation.province;
+                request.District = userData.currentLocation.district;
 
                 restaurant = await r.GetRestaurantListByLocation(request);
             }
@@ -70,18 +65,18 @@ namespace WebAPI_Giris.Controllers
                 currentLocation = userData.currentLocation,
                 restaurant = restaurant.Value,
             };
+            */
 
-
-            return new JsonResult(data);
+            return new JsonResult(null);
         }
 
         //Profile Page Data
         [HttpGet("ProfilePageData")]
         public async Task<JsonResult> ProfilePageData()
         {
-            UserController u = new UserController(userService, dbService);
-            LocationController l = new LocationController(locationService, dbService);
-            CreditCardController c = new CreditCardController(creditCardService, dbService);
+            UserController u = new UserController(userService);
+            LocationController l = new LocationController(locationService);
+            CreditCardController c = new CreditCardController(creditCardService);
 
             JsonResult user = await u.GetAccountInfo();
             JsonResult location = await l.GetUserLocationList();
@@ -104,7 +99,7 @@ namespace WebAPI_Giris.Controllers
         [HttpGet("NavbarData")]
         public async Task<JsonResult> NavbarData()
         {
-            CartController c = new CartController(cartService, dbService);
+            CartController c = new CartController(cartService);
 
             JsonResult cart = await c.GetCartInfo();
 
@@ -122,9 +117,9 @@ namespace WebAPI_Giris.Controllers
         [HttpGet("RestaurantDetailsPageData")]
         public async Task<JsonResult> RestaurantDetailsPageData([FromQuery] int restaurantID)
         {
-            RestaurantController r = new RestaurantController(restaurantService, dbService);
+            RestaurantController r = new RestaurantController(restaurantService);
 
-            JsonResult restaurant = await r.GetRestaurantInfoByID(restaurantID);
+            JsonResult restaurant = await r.GetRestaurantInformationByID(restaurantID);
 
             //Preparing final form of json result
             var data = new

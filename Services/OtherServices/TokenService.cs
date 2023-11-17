@@ -1,8 +1,8 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using ImHungryBackendER.Models.ParameterModels;
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using WebAPI_Giris.Models.Parameters.TokenParams;
 using WebAPI_Giris.Services.OtherServices.Interfaces;
 
 namespace WebAPI_Giris.Services.OtherServices
@@ -26,7 +26,7 @@ namespace WebAPI_Giris.Services.OtherServices
                     audience: configuration["AppSettings:ValidAudience"],
                     claims: new List<Claim>
                     {
-                        new Claim(ClaimTypes.NameIdentifier, request.userID)
+                        new Claim(ClaimTypes.NameIdentifier, request.UserID)
                     },
                     notBefore: DateTime.UtcNow,
                     expires: expireDate,
@@ -35,8 +35,8 @@ namespace WebAPI_Giris.Services.OtherServices
 
             return Task.FromResult(new GenerateTokenResponse
             {
-                token = new JwtSecurityTokenHandler().WriteToken(jwt),
-                tokenExpireDate = expireDate
+                Token = new JwtSecurityTokenHandler().WriteToken(jwt),
+                TokenExpireDate = expireDate
             });
         }
     }

@@ -1,17 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using ImHungryBackendER.Models.ParameterModels;
+using ImHungryBackendER.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Npgsql;
-using System.Data;
-using System.Data.SqlTypes;
-using System.Diagnostics;
-using System.Security.Cryptography;
-using System.Text;
-using WebAPI_Giris.Models;
-using WebAPI_Giris.Models.Parameters.UserParams;
 using WebAPI_Giris.Services.ControllerServices.Interfaces;
-using WebAPI_Giris.Services.OtherServices.Interfaces;
 
 namespace WebAPI_Giris.Controllers
 {
@@ -21,13 +12,10 @@ namespace WebAPI_Giris.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService userService;
-        private readonly IDbService dbService;
 
-        public UserController(IUserService userService, IDbService dbService)
+        public UserController(IUserService userService)
         {
-            this.userService = userService;
-            this.dbService = dbService;
-            AppDomain.CurrentDomain.ProcessExit += HandleProcessExit; //runs on exit       
+            this.userService = userService;     
         }
 
         //general user info
@@ -45,9 +33,9 @@ namespace WebAPI_Giris.Controllers
         }
 
         [HttpPut("SetAccountInfo")]
-        public async Task<bool> SetAccountInfo([FromBody] SetAccountInfoRequest request)
+        public async Task SetAccountInfo([FromBody] UserAccountViewModel request)
         {
-            return await userService.SetAccountInfo(request);
+            await userService.SetAccountInfo(request);
         }
 
         //location operations
@@ -58,28 +46,28 @@ namespace WebAPI_Giris.Controllers
         }
 
         [HttpPut("SetCurrentLocation")]
-        public async Task<bool> SetCurrentLocation([FromBody] SetCurrentLocationRequest request)
+        public async Task SetCurrentLocation([FromBody] long locationID)
         {
-            return await userService.SetCurrentLocation(request);
+            await userService.SetCurrentLocation(locationID);
         }
 
         //Verify given user property
         [HttpPost("VerifyUsername")]
-        public async Task<bool> VerifyUsername([FromBody] VerifyUsernameRequest request)
+        public async Task<bool> VerifyUsername([FromBody] string username)
         {
-            return await userService.VerifyUsername(request);
+            return await userService.VerifyUsername(username);
         }
 
         [HttpPost("VerifyEmail")]
-        public async Task<bool> VerifyEmail([FromBody] VerifyEmailRequest request)
+        public async Task<bool> VerifyEmail([FromBody] string email)
         {
-            return await userService.VerifyEmail(request);
+            return await userService.VerifyEmail(email);
         }
 
         [HttpPost("VerifyPassword")]
-        public async Task<bool> VerifyPassword([FromBody] VerifyPasswordRequest request)
+        public async Task<bool> VerifyPassword([FromBody] string password)
         {
-            return await userService.VerifyPassword(request);
+            return await userService.VerifyPassword(password);
         }
 
         //Password operations
@@ -90,16 +78,9 @@ namespace WebAPI_Giris.Controllers
         }
 
         [HttpPut("ChangePassword")]
-        public async Task<bool> ChangePassword([FromBody] ChangePasswordRequest request)
+        public async Task ChangePassword([FromBody] string encryptedPassword)
         {
-            return await userService.ChangePassword(request);
-        }
-
-        //Helpers
-        [NonAction]
-        public void HandleProcessExit(object sender, EventArgs e)
-        {
-            dbService.CloseConnection();
+            await userService.ChangePassword(encryptedPassword);
         }
     }
 }
