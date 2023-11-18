@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Data;
 using WebAPI_Giris.Models;
 using WebAPI_Giris.Services.ControllerServices.Interfaces;
+using static WebAPI_Giris.Services.ControllerServices.Interfaces.ICartService;
 
 namespace WebAPI_Giris.Services.ControllerServices
 {
@@ -42,10 +43,7 @@ namespace WebAPI_Giris.Services.ControllerServices
         public async Task<JsonResult> GetUserCartItemList()
         {
             var userID = _userService.GetCurrentUserID();
-            var userCartItems = _context.Users.Where(a => a.Id == userID)
-                                   .Include(a => a.CartItems).ThenInclude(a => a.Item).ThenInclude(a => a.Category)
-                                   .Include(a => a.CartItems).ThenInclude(a => a.Restaurant)
-                                   .FirstOrDefault()!.CartItems.AsQueryable()
+            var userCartItems = _context.CartItems.Where(a => a.UserId == userID)
                                    .ProjectTo<CartItemViewModel>(_mapper.ConfigurationProvider)
                                    .ToList();
 
@@ -55,119 +53,84 @@ namespace WebAPI_Giris.Services.ControllerServices
         public async Task<int> GetUserCartItemNumber()
         {
             var userID = _userService.GetCurrentUserID();
-            var userCartItemsAmountList = _context.Users.Where(a => a.Id == userID)
-                                             .Include(a => a.CartItems).FirstOrDefault()!.CartItems.AsQueryable()
-                                             .Select(a => a.Amount)
-                                             .ToList();
+            var userCartItemsAmount = _context.CartItems.Where(a => a.UserId == userID)
+                                             .Sum(a => a.Amount);
 
-            int itemNumber = 0;
-            userCartItemsAmountList.ForEach(a => { itemNumber += a; });
-
-            return itemNumber;
+            return userCartItemsAmount;
         }
 
-        public async Task<bool> AddItemToCart(CartTransactionRequest request)
+        public async Task AddItemToCart(CartTransactionRequest request)
         {
             //item already exist on the cart, so just need to increase amount
-            if (await isItemExistsOnCart(request))
+            if (await isItemExistsOnCart(request.cartItemID))
             {
-                return await changeAmountOfItem(request);
+                await changeAmountOfItem(request.cartItemID, request.amount);
             }
             //item is not exist in the cart, so create fresh row for that item
             else
             {
-                return await createItemInCart(request);
+                await createItemInCart(request);
             }
         }
 
-        public async Task<bool> DeleteItemFromCart(CartTransactionRequest request, long cartItemID)
+        public async Task DecreaseItemAmountByOne(long cartItemID)
         {
-            await changeAmountOfItem(request);
-
-            //if it equals to 0 after decreasing amount of item, remove that item from cart
-            if (await getItemAmount(request) == 0)
+            if (await isItemExistsOnCart(cartItemID))
             {
-                return await removeItemInCart(cartItemID);
+                //if it equals to 0 after decreasing amount of item, remove that item from cart
+                if (await changeAmountOfItem(cartItemID, -1) <= 0)
+                {
+                    await removeItemInCart(cartItemID);
+                }
             }
-
-            return true;
         }
-
 
         //Helpers
-        public async Task<int> getItemAmount(CartTransactionRequest request)
+        public async Task<int> getItemAmount(long cartItemID)
         {
             var userID = _userService.GetCurrentUserID();
-            var userCart = _context.Users.Where(a => a.Id == userID)
-                              .Include(a => a.CartItems).ThenInclude(a => a.Restaurant)
-                              .Include(a => a.CartItems).ThenInclude(a => a.Item)
-                              .Include(a => a.CartItems)
-                              .FirstOrDefault()!.CartItems.AsQueryable();
-
-            var itemAmount = userCart
-                                .Where(a => a.Item.Id == request.itemID)
-                                .Where(a => a.Restaurant.Id == request.restaurantID)
-                                .Where(a => a.IngredientList == request.ingredients)
+            var itemAmount = _context.CartItems
+                                .Where(a => a.Id == cartItemID)
                                 .Select(a => a.Amount).FirstOrDefault();
-                              
+                                
             return itemAmount;
         }
 
-        public async Task<bool> isItemExistsOnCart(CartTransactionRequest request)
+        public async Task<bool> isItemExistsOnCart(long cartItemID)
         {
-            var userID = _userService.GetCurrentUserID();
-            var userCart = _context.Users.Where(a => a.Id == userID)
-                              .Include(a => a.CartItems).ThenInclude(a => a.Restaurant)
-                              .Include(a => a.CartItems).ThenInclude(a => a.Item)
-                              .Include(a => a.CartItems)
-                              .FirstOrDefault()!.CartItems.AsQueryable();
+            var itemAmount = await getItemAmount(cartItemID);
 
-            var cartItemID = userCart
-                                .Where(a => a.Item.Id == request.itemID)
-                                .Where(a => a.Restaurant.Id == request.restaurantID)
-                                .Where(a => a.IngredientList == request.ingredients)
-                                .Select(a => a.Id).FirstOrDefault();
-
-            return cartItemID==0 ? false : true;
+            return itemAmount==0 ? false : true;
         }
 
-        public async Task<bool> changeAmountOfItem(CartTransactionRequest request)
+        public async Task<int> changeAmountOfItem(long cartItemID, int amount)
         {
             var userID = _userService.GetCurrentUserID();
-            var userCart = _context.Users.Where(a => a.Id == userID)
-                              .Include(a => a.CartItems).ThenInclude(a => a.Restaurant)
-                              .Include(a => a.CartItems).ThenInclude(a => a.Item)
-                              .Include(a => a.CartItems)
-                              .FirstOrDefault()!.CartItems.AsQueryable();
+            var cartItem = _context.CartItems
+                              .Where(a => a.Id == cartItemID)
+                              .FirstOrDefault();
 
-            var cartItem = userCart
-                                .Where(a => a.Item.Id == request.itemID)
-                                .Where(a => a.Restaurant.Id == request.restaurantID)
-                                .Where(a => a.IngredientList == request.ingredients)
-                                .FirstOrDefault();
-
-            cartItem.Amount = (int)(cartItem.Amount + request.amount);
+            cartItem.Amount += amount;
             await _context.SaveChangesAsync();
-            return true;
+            return cartItem.Amount;
         }
 
-        public async Task<bool> createItemInCart(CartTransactionRequest request)
+        public async Task createItemInCart(CartTransactionRequest request)
         {
             var userID = _userService.GetCurrentUserID();
-            var userCart = _context.Users.Where(a => a.Id == userID)
-                              .Include(a => a.CartItems)
-                              .FirstOrDefault()!.CartItems;
 
             //Following item and restaurant must exist
+            var userCart = _context.CartItems.Where(a => a.UserId == userID).ToList();
             var item = _context.Items.Where(a => a.Id == request.itemID).FirstOrDefault();
             var restaurant = _context.Restaurants.Where(a => a.Id == request.restaurantID).FirstOrDefault();
 
             var newCartItem = new Cart()
             {
-                Amount = (int)request.amount,
+                Amount = request.amount,
                 IngredientList = request.ingredients,
+                UserId = userID,
                 Restaurant = restaurant,
-                Item = item
+                Item = item,
             };
 
             //Check if userCart has already been created
@@ -176,17 +139,16 @@ namespace WebAPI_Giris.Services.ControllerServices
             else 
                 userCart.Add(newCartItem);
 
+            _context.CartItems.Attach(newCartItem);
             await _context.SaveChangesAsync();
-            return true;
         }
 
-        public async Task<bool> removeItemInCart(long cartItemID)
+        public async Task removeItemInCart(long cartItemID)
         {
             var cartItem = _context.CartItems.Where(a => a.Id == cartItemID).FirstOrDefault();
 
             _context.CartItems.Remove(cartItem);
             await _context.SaveChangesAsync();
-            return true;
         }
     }
 }

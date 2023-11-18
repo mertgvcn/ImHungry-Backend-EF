@@ -42,7 +42,7 @@ namespace WebAPI_Giris.Services.OtherServices
             var user = _context.Users.Where(user => user.Username == request.Username).FirstOrDefault();
             if (user is null) return response;
 
-            isLogin = BCrypt.Net.BCrypt.Verify(request.EncryptedPassword, user.Password); //request.encrypted => plainPassword
+            isLogin = BCrypt.Net.BCrypt.Verify(request.EncryptedPassword, user.Password); //request.Encryptedpass -> plainpassword çevir
 
             if (isLogin)
             {
@@ -69,9 +69,8 @@ namespace WebAPI_Giris.Services.OtherServices
                 return response;
             }
 
-            //string password = cryptionService.Decrypt(user.Password); //The password comes encrypted from the frontend
-            string password = BCrypt.Net.BCrypt.HashPassword(user.Password); //Hashing the password for security
-            //72 -> yorum satırını kaldır, 73 -> string kaldır, user.Password => password 
+            string password = cryptionService.Decrypt(user.Password); //The password comes encrypted from the frontend
+            password = BCrypt.Net.BCrypt.HashPassword(password); //Hashing the password for security
 
             User newUser = new User()
             {

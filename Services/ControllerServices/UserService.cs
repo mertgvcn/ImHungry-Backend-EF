@@ -156,13 +156,13 @@ namespace WebAPI_Giris.Services.ControllerServices
         public async Task ChangePassword(string encryptedPassword)
         {
             var userID = GetCurrentUserID();
-            //string newPassword = _cryptionService.Decrypt(encryptedPassword); //Convert encrypted password that comes from frontend to plain password
-            string newPassword = BCrypt.Net.BCrypt.HashPassword(encryptedPassword); //password hashing
+            string plainPassword = _cryptionService.Decrypt(encryptedPassword); //Convert encrypted password that comes from frontend to plain password
+            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(plainPassword); //password hashing
 
             User user = new User()
             {
                 Id = userID,
-                Password = newPassword,
+                Password = hashedPassword,
             };
 
             _context.Update(user);

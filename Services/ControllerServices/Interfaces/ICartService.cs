@@ -8,13 +8,14 @@ namespace WebAPI_Giris.Services.ControllerServices.Interfaces
         public Task<JsonResult> GetCartInfo();
         public Task<JsonResult> GetUserCartItemList();
         public Task<int> GetUserCartItemNumber();
-        public Task<bool> AddItemToCart(CartTransactionRequest request);
-        public Task<bool> DeleteItemFromCart(CartTransactionRequest request, long cartItemID);
 
-        public Task<int> getItemAmount(CartTransactionRequest request);
-        public Task<bool> isItemExistsOnCart(CartTransactionRequest request);
-        public Task<bool> changeAmountOfItem(CartTransactionRequest request);
-        public Task<bool> createItemInCart(CartTransactionRequest request);
-        public Task<bool> removeItemInCart(long cartItemID);
+        public Task AddItemToCart(CartTransactionRequest request);
+        public Task DecreaseItemAmountByOne(long cartItemID);
+
+        public Task<int> getItemAmount(long cartItemID);
+        public Task<bool> isItemExistsOnCart(long cartItemID);
+        public Task<int> changeAmountOfItem(long cartItemID, int amount);
+        public Task createItemInCart(CartTransactionRequest request);
+        public Task removeItemInCart(long cartItemID);
     }
 }

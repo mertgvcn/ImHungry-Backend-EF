@@ -27,7 +27,7 @@ namespace WebAPI_Giris.Controllers
 
         [HttpPost("register")]
         [AllowAnonymous]
-        public async Task<ActionResult<UserRegisterResponse>> Register(UserRegisterRequest user)
+        public async Task<ActionResult<UserRegisterResponse>> Register([FromBody] UserRegisterRequest user)
         {
             var result = await authService.RegisterUserAsync(user);
 

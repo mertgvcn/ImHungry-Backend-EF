@@ -37,19 +37,17 @@ namespace WebAPI_Giris.Controllers
         }
 
         [HttpPost("AddItemToCart")]
-        public async Task<bool> AddItemToCart([FromBody] CartTransactionRequest request)
+        public async Task AddItemToCart([FromBody] CartTransactionRequest request)
         {
             if (request.ingredients == "") request.ingredients = null;
 
-            return await cartService.AddItemToCart(request);
+            await cartService.AddItemToCart(request);
         }
 
-        [HttpDelete("DeleteItemFromCart")]
-        public async Task<bool> DeleteItemFromCart([FromQuery] CartTransactionRequest request, [FromQuery] long cartItemID)
+        [HttpDelete("DecreaseItemAmountByOne")]
+        public async Task DecreaseItemAmountByOne([FromQuery] long cartItemID)
         {
-            if(request.ingredients == "") request.ingredients = null;
-
-            return await cartService.DeleteItemFromCart(request, cartItemID);
+            await cartService.DecreaseItemAmountByOne(cartItemID);
         }
     }
 }
