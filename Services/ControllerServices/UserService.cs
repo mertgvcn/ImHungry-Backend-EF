@@ -14,6 +14,7 @@ using WebAPI_Giris.Services.OtherServices.Interfaces;
 
 namespace WebAPI_Giris.Services.ControllerServices
 {
+    #pragma warning disable
     public class UserService : IUserService
     {
         private readonly ImHungryContext _context;
@@ -96,10 +97,15 @@ namespace WebAPI_Giris.Services.ControllerServices
         {
             var userID = GetCurrentUserID();
             var currentLocation = _context.Users.Where(user => user.Id == userID)
-                                    .Include(a => a.CurrentLocation).Select(a => a.CurrentLocation)
-                                    .ProjectTo<LocationViewModel>(_mapper.ConfigurationProvider).FirstOrDefault();
+                                     .Include(a => a.CurrentLocation).Select(a => a.CurrentLocation)
+                                     .FirstOrDefault();
 
-            return new JsonResult(currentLocation);
+            if(currentLocation != null)
+            {
+                return new JsonResult(_mapper.Map<LocationViewModel>(currentLocation));
+            }
+
+            return new JsonResult(null);
         }
 
         public async Task SetCurrentLocation(long locationID)

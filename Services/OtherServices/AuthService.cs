@@ -42,7 +42,7 @@ namespace WebAPI_Giris.Services.OtherServices
             var user = _context.Users.Where(user => user.Username == request.Username).FirstOrDefault();
             if (user is null) return response;
 
-            isLogin = BCrypt.Net.BCrypt.Verify(request.EncryptedPassword, user.Password); //request.Encryptedpass -> plainpassword çevir
+            isLogin = BCrypt.Net.BCrypt.Verify(plainPassword, user.Password);
 
             if (isLogin)
             {
