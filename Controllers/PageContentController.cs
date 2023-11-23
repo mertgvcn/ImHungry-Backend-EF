@@ -1,4 +1,5 @@
 ﻿using ImHungryBackendER.Models.ParameterModels;
+using ImHungryBackendER.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -45,29 +46,26 @@ namespace WebAPI_Giris.Controllers
             JsonResult user = await u.GetUserInfo();
             JsonResult restaurant = new JsonResult(null);
 
-
             //Fetch restaurants if user have location, could be done by another hasLocation request. But its a serialize,deserialize example.
             var serializedUserData = JsonConvert.SerializeObject(user.Value);
-            /*UserData userData = JsonConvert.DeserializeObject<UserData>(serializedUserData);
+            UserData userData = JsonConvert.DeserializeObject<UserData>(serializedUserData);
             if (userData.currentLocation != null)
             {
                 GetRestaurantListByLocationRequest request = new();
-                request.Province = userData.currentLocation.province;
-                request.District = userData.currentLocation.district;
+                request.Province = userData.currentLocation.Province;
+                request.District = userData.currentLocation.District;
 
                 restaurant = await r.GetRestaurantListByLocation(request);
             }
-
 
             //Preparing final form of json result
             var data = new
             {
                 currentLocation = userData.currentLocation,
                 restaurant = restaurant.Value,
-            };
-            */
+            };          
 
-            return new JsonResult(null);
+            return new JsonResult(data);
         }
 
         //Profile Page Data
@@ -130,5 +128,11 @@ namespace WebAPI_Giris.Controllers
 
             return new JsonResult(data);
         }
+    }
+
+    public class UserData
+    {
+        public UserAccountViewModel accountInfo { get; set; }
+        public LocationViewModel currentLocation { get; set; }
     }
 }
