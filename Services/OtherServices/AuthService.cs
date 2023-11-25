@@ -62,7 +62,7 @@ namespace WebAPI_Giris.Services.OtherServices
             response.isSuccess = true;
 
             //check if username already exists
-            if (await userService.VerifyUsername(user.Username))
+            if (await userService.VerifyUsername(new VerifyUsernameRequest { Username = user.Username } ))
             {
                 response.isSuccess = false;
                 response.ErrorMessage = "Invalid username";
