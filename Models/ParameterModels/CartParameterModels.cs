@@ -4,10 +4,10 @@ namespace ImHungryBackendER.Models.ParameterModels
 {
     public class CartTransactionRequest
     {
-        public long cartItemID { get; set; }
-        public int itemID { get; set; }
-        public int restaurantID { get; set; }
-        public string? ingredients { get; set; }
-        public int amount { get; set; }
+        public long CartItemID { get; set; }
+        public int ItemID { get; set; }
+        public int RestaurantID { get; set; }
+        public string? Ingredients { get; set; }
+        public int Amount { get; set; }
     }
 }

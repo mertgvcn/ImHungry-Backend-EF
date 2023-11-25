@@ -2,9 +2,9 @@
 {
     public class AddCreditCardRequest
     {
-        public string creditCardNumber { get; set; }
-        public string creditCardHolderName { get; set; }
-        public string expirationDate { get; set; }
-        public short cvv { get; set; }
+        public string CreditCardNumber { get; set; }
+        public string CreditCardHolderName { get; set; }
+        public string ExpirationDate { get; set; }
+        public short CVV { get; set; }
     }
 }

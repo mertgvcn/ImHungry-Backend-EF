@@ -2,7 +2,7 @@
 {
     public class GetItemIngredientResponse
     {
-        public string name { get; set; }
+        public string Name { get; set; }
         public bool isActive { get; set; }
     }
 }
