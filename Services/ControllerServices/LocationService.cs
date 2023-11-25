@@ -40,15 +40,15 @@ namespace WebAPI_Giris.Services.ControllerServices
         {
             var newLocation = new UserLocation()
             {
-                Title = request.locationTitle,
-                Province = request.province,
-                District = request.district,
-                Neighbourhood = request.neighbourhood,
-                Street = request.street,
-                BuildingNo = request.buildingNo,
-                BuildingAddition = request.buildingAddition,
-                ApartmentNo = request.apartmentNo,
-                Note = request.note,
+                Title = request.LocationTitle,
+                Province = request.Province,
+                District = request.District,
+                Neighbourhood = request.Neighbourhood,
+                Street = request.Street,
+                BuildingNo = request.BuildingNo,
+                BuildingAddition = request.BuildingAddition,
+                ApartmentNo = request.ApartmentNo,
+                Note = request.Note,
             };
 
             var userID = _userService.GetCurrentUserID();

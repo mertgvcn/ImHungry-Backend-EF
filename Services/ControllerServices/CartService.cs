@@ -62,9 +62,9 @@ namespace WebAPI_Giris.Services.ControllerServices
         public async Task AddItemToCart(CartTransactionRequest request)
         {
             //item already exist on the cart, so just need to increase amount
-            if (await isItemExistsOnCart(request.cartItemID))
+            if (await isItemExistsOnCart(request.CartItemID))
             {
-                await changeAmountOfItem(request.cartItemID, request.amount);
+                await changeAmountOfItem(request.CartItemID, request.Amount);
             }
             //item is not exist in the cart, so create fresh row for that item
             else
@@ -121,13 +121,13 @@ namespace WebAPI_Giris.Services.ControllerServices
 
             //Following item and restaurant must exist
             var userCart = _context.CartItems.Where(a => a.UserId == userID).ToList();
-            var item = _context.Items.Where(a => a.Id == request.itemID).FirstOrDefault();
-            var restaurant = _context.Restaurants.Where(a => a.Id == request.restaurantID).FirstOrDefault();
+            var item = _context.Items.Where(a => a.Id == request.ItemID).FirstOrDefault();
+            var restaurant = _context.Restaurants.Where(a => a.Id == request.RestaurantID).FirstOrDefault();
 
             var newCartItem = new Cart()
             {
-                Amount = request.amount,
-                IngredientList = request.ingredients,
+                Amount = request.Amount,
+                IngredientList = request.Ingredients,
                 UserId = userID,
                 Restaurant = restaurant,
                 Item = item,

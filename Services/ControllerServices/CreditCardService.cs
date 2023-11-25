@@ -40,10 +40,10 @@ namespace WebAPI_Giris.Services.ControllerServices
         {
             var newCreditCard = new CreditCard()
             {
-                Number = request.creditCardNumber,
-                HolderName = request.creditCardHolderName,
-                ExpirationDate = request.expirationDate,
-                CVV = request.cvv
+                Number = request.CreditCardNumber,
+                HolderName = request.CreditCardHolderName,
+                ExpirationDate = request.ExpirationDate,
+                CVV = request.CVV
             };
             
             var userID = _userService.GetCurrentUserID();

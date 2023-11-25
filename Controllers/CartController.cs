@@ -39,7 +39,7 @@ namespace WebAPI_Giris.Controllers
         [HttpPost("AddItemToCart")]
         public async Task AddItemToCart([FromBody] CartTransactionRequest request)
         {
-            if (request.ingredients == "") request.ingredients = null;
+            if (request.Ingredients == "") request.Ingredients = null;
 
             await cartService.AddItemToCart(request);
         }

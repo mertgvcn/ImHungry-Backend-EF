@@ -31,7 +31,7 @@ namespace WebAPI_Giris.Services.ControllerServices
                 ingredients.Add(
                     new GetItemIngredientResponse
                     {
-                        name = ingredientName,
+                        Name = ingredientName,
                         isActive = true
                     }
                 );
