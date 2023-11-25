@@ -46,28 +46,28 @@ namespace WebAPI_Giris.Controllers
         }
 
         [HttpPut("SetCurrentLocation")]
-        public async Task SetCurrentLocation([FromBody] long locationID)
+        public async Task SetCurrentLocation([FromBody] SetCurrentLocationRequest request)
         {
-            await userService.SetCurrentLocation(locationID);
+            await userService.SetCurrentLocation(request);
         }
 
         //Verify given user property
         [HttpPost("VerifyUsername")]
-        public async Task<bool> VerifyUsername([FromBody] string username)
+        public async Task<bool> VerifyUsername([FromBody] VerifyUsernameRequest request)
         {
-            return await userService.VerifyUsername(username);
+            return await userService.VerifyUsername(request);
         }
 
         [HttpPost("VerifyEmail")]
-        public async Task<bool> VerifyEmail([FromBody] string email)
+        public async Task<bool> VerifyEmail([FromBody] VerifyEmailRequest request)
         {
-            return await userService.VerifyEmail(email);
+            return await userService.VerifyEmail(request);
         }
 
         [HttpPost("VerifyPassword")]
-        public async Task<bool> VerifyPassword([FromBody] string password)
+        public async Task<bool> VerifyPassword([FromBody] VerifyPasswordRequest request)
         {
-            return await userService.VerifyPassword(password);
+            return await userService.VerifyPassword(request);
         }
 
         //Password operations
@@ -78,9 +78,9 @@ namespace WebAPI_Giris.Controllers
         }
 
         [HttpPut("ChangePassword")]
-        public async Task ChangePassword([FromBody] string encryptedPassword)
+        public async Task ChangePassword([FromBody] ChangePasswordRequest request)
         {
-            await userService.ChangePassword(encryptedPassword);
+            await userService.ChangePassword(request);
         }
     }
 }

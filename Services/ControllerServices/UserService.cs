@@ -14,7 +14,7 @@ using WebAPI_Giris.Services.OtherServices.Interfaces;
 
 namespace WebAPI_Giris.Services.ControllerServices
 {
-    #pragma warning disable
+    #pragma warning disable //removes error lines
     public class UserService : IUserService
     {
         private readonly ImHungryContext _context;
@@ -108,10 +108,10 @@ namespace WebAPI_Giris.Services.ControllerServices
             return new JsonResult(null);
         }
 
-        public async Task SetCurrentLocation(long locationID)
+        public async Task SetCurrentLocation(SetCurrentLocationRequest request)
         {
             var userID = GetCurrentUserID();
-            var newCurrentLocation = _context.UserLocations.Where(a => a.Id == locationID).FirstOrDefault();
+            var newCurrentLocation = _context.UserLocations.Where(a => a.Id == request.LocationID).FirstOrDefault();
 
             User user = new User()
             {
@@ -130,39 +130,39 @@ namespace WebAPI_Giris.Services.ControllerServices
         }
 
         //Check db if username and email exists
-        public async Task<bool> VerifyUsername(string username)
+        public async Task<bool> VerifyUsername(VerifyUsernameRequest request)
         {
-            var user = _context.Users.Where(a => a.Username == username).FirstOrDefault();
+            var user = _context.Users.Where(a => a.Username == request.Username).FirstOrDefault();
 
             return (user == null) ? false : true;
         }
 
-        public async Task<bool> VerifyEmail(string email)
+        public async Task<bool> VerifyEmail(VerifyEmailRequest request)
         {
-            var user = _context.Users.Where(a => a.Email == email).FirstOrDefault();
+            var user = _context.Users.Where(a => a.Email == request.Email).FirstOrDefault();
 
             return (user == null) ? false : true;
         }
 
-        public async Task<bool> VerifyPassword(string plainPassword)
+        public async Task<bool> VerifyPassword(VerifyPasswordRequest request)
         {
             var userID = GetCurrentUserID();
             var user = _context.Users.Where(user => user.Id == userID).FirstOrDefault();
 
-            return (user==null) ? false : BCrypt.Net.BCrypt.Verify(plainPassword, user.Password); //user.Password is hashed password
+            return (user==null) ? false : BCrypt.Net.BCrypt.Verify(request.PlainPassword, user.Password); //user.Password is hashed password
         }
 
         //Password operations
         public async Task<bool> iForgotMyPassword(iForgotMyPasswordRequest request)
         {
             //Mailine yeni şifre gönder
-            return await VerifyEmail(request.Email);
+            return await VerifyEmail(new VerifyEmailRequest { Email = request.Email });
         }
 
-        public async Task ChangePassword(string encryptedPassword)
+        public async Task ChangePassword(ChangePasswordRequest request)
         {
             var userID = GetCurrentUserID();
-            string plainPassword = _cryptionService.Decrypt(encryptedPassword); //Convert encrypted password that comes from frontend to plain password
+            string plainPassword = _cryptionService.Decrypt(request.EncryptedPassword); //Convert encrypted password that comes from frontend to plain password
             string hashedPassword = BCrypt.Net.BCrypt.HashPassword(plainPassword); //password hashing
 
             User user = new User()

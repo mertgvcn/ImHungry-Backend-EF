@@ -13,13 +13,13 @@ namespace WebAPI_Giris.Services.ControllerServices.Interfaces
         public Task SetAccountInfo(UserAccountViewModel request);
 
         public Task<JsonResult> GetCurrentLocation();
-        public Task SetCurrentLocation(long locationID);
+        public Task SetCurrentLocation(SetCurrentLocationRequest request);
 
-        public Task<bool> VerifyUsername(string username);
-        public Task<bool> VerifyEmail(string email);
-        public Task<bool> VerifyPassword(string password);
+        public Task<bool> VerifyUsername(VerifyUsernameRequest request);
+        public Task<bool> VerifyEmail(VerifyEmailRequest request);
+        public Task<bool> VerifyPassword(VerifyPasswordRequest request);
 
         public Task<bool> iForgotMyPassword(iForgotMyPasswordRequest request);
-        public Task ChangePassword(string encryptedPassword);
+        public Task ChangePassword(ChangePasswordRequest request);
     }
 }
