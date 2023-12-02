@@ -63,7 +63,7 @@ namespace WebAPI_Giris.Services.ControllerServices
                                     .Where(a => a.Restaurant.Id == restaurantID)
                                     .Include(a => a.Category)
                                     .ProjectTo<ItemViewModel>(_mapper.ConfigurationProvider)
-                                    .ToList();
+                                    .ToList().OrderBy(a => a.Category.Id);
 
             return new JsonResult(restaurantMenu);
         }
