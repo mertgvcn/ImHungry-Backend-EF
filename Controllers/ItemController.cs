@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using ImHungryBackendER.Models.ParameterModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI_Giris.Services.ControllerServices.Interfaces;
 
@@ -17,9 +18,9 @@ namespace WebAPI_Giris.Controllers
         }
 
         [HttpPost("GetItemIngredients")]
-        public async Task<JsonResult> GetItemIngredients([FromBody] int itemID)
+        public async Task<JsonResult> GetItemIngredients([FromBody] GetItemIngredientRequest request)
         {
-            return await itemService.GetItemIngredients(itemID);
+            return await itemService.GetItemIngredients(request);
         }
     }
 }

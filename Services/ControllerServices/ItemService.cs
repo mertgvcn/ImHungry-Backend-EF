@@ -16,12 +16,12 @@ namespace WebAPI_Giris.Services.ControllerServices
             _context = context;
         }
 
-        public async Task<JsonResult> GetItemIngredients(int itemID)
+        public async Task<JsonResult> GetItemIngredients(GetItemIngredientRequest request)
         {
             List<GetItemIngredientResponse> ingredients = new List<GetItemIngredientResponse>();
 
             var ingredientNameList = _context.Items
-                                        .Where(item => item.Id == itemID)
+                                        .Where(item => item.Id == request.ItemId)
                                         .Include(a => a.Ingredients).FirstOrDefault()!.Ingredients.AsQueryable()
                                         .Select(a => a.Name)
                                         .ToList();
