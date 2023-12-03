@@ -13,7 +13,8 @@ namespace WebAPI_Giris.Services.ControllerServices.Interfaces
         public Task DecreaseItemAmountByOne(long cartItemID);
 
         public Task<int> getItemAmount(long cartItemID);
-        public Task<bool> isItemExistsOnCart(long cartItemID);
+        public Task<bool> isItemInCartByCartItemId(long cartItemID);
+        public Task<bool> isItemInCartByParameters(CartTransactionRequest request);
         public Task<int> changeAmountOfItem(long cartItemID, int amount);
         public Task createItemInCart(CartTransactionRequest request);
         public Task removeItemInCart(long cartItemID);

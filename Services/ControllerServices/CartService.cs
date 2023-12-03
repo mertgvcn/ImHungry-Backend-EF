@@ -4,11 +4,9 @@ using ImHungryBackendER;
 using ImHungryBackendER.Models.ParameterModels;
 using ImHungryBackendER.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Data;
 using WebAPI_Giris.Models;
 using WebAPI_Giris.Services.ControllerServices.Interfaces;
-using static WebAPI_Giris.Services.ControllerServices.Interfaces.ICartService;
 
 namespace WebAPI_Giris.Services.ControllerServices
 {
@@ -45,7 +43,7 @@ namespace WebAPI_Giris.Services.ControllerServices
             var userID = _userService.GetCurrentUserID();
             var userCartItems = _context.CartItems.Where(a => a.UserId == userID)
                                    .ProjectTo<CartItemViewModel>(_mapper.ConfigurationProvider)
-                                   .ToList();
+                                   .ToList().OrderBy(a => a.Id);
 
             return new JsonResult(userCartItems);
         }
@@ -61,8 +59,19 @@ namespace WebAPI_Giris.Services.ControllerServices
 
         public async Task AddItemToCart(CartTransactionRequest request)
         {
+            bool isItemExistOnCart;
+
+            if(request.CartItemID == 0)
+            {
+                isItemExistOnCart = await isItemInCartByParameters(request);
+            }
+            else
+            {
+                isItemExistOnCart = await isItemInCartByCartItemId(request.CartItemID);
+            }
+
             //item already exist on the cart, so just need to increase amount
-            if (await isItemExistsOnCart(request.CartItemID))
+            if (isItemExistOnCart)
             {
                 await changeAmountOfItem(request.CartItemID, request.Amount);
             }
@@ -75,7 +84,7 @@ namespace WebAPI_Giris.Services.ControllerServices
 
         public async Task DecreaseItemAmountByOne(long cartItemID)
         {
-            if (await isItemExistsOnCart(cartItemID))
+            if (await isItemInCartByCartItemId(cartItemID))
             {
                 //if it equals to 0 after decreasing amount of item, remove that item from cart
                 if (await changeAmountOfItem(cartItemID, -1) <= 0)
@@ -96,11 +105,32 @@ namespace WebAPI_Giris.Services.ControllerServices
             return itemAmount;
         }
 
-        public async Task<bool> isItemExistsOnCart(long cartItemID)
+        public async Task<bool> isItemInCartByCartItemId(long cartItemID)
         {
             var itemAmount = await getItemAmount(cartItemID);
 
-            return itemAmount==0 ? false : true;
+            return itemAmount == 0 ? false : true;      
+        }
+
+        public async Task<bool> isItemInCartByParameters(CartTransactionRequest request)
+        {
+            var userID = _userService.GetCurrentUserID();
+            var cartItem = _context.CartItems
+                              .Where(a => a.UserId == userID)
+                              .Where(a => a.Restaurant.Id == request.RestaurantID)
+                              .Where(a => a.Item.Id == request.ItemID)
+                              .Where(a => a.IngredientList == request.Ingredients)
+                              .FirstOrDefault();
+
+            if (cartItem is null)
+            {
+                return false;
+            }
+            else
+            {
+                request.CartItemID = cartItem.Id;
+                return true;
+            }   
         }
 
         public async Task<int> changeAmountOfItem(long cartItemID, int amount)
@@ -119,7 +149,7 @@ namespace WebAPI_Giris.Services.ControllerServices
         {
             var userID = _userService.GetCurrentUserID();
 
-            //Following item and restaurant must exist
+            //Following item and restaurant must exist, no need to check
             var userCart = _context.CartItems.Where(a => a.UserId == userID).ToList();
             var item = _context.Items.Where(a => a.Id == request.ItemID).FirstOrDefault();
             var restaurant = _context.Restaurants.Where(a => a.Id == request.RestaurantID).FirstOrDefault();
