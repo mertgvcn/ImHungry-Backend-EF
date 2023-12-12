@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using WebAPI_Giris.Models;
-
-namespace ImHungryBackendER.Models.ViewModels
+﻿namespace ImHungryBackendER.Models.ViewModels
 {
     public class CartItemViewModel
     {

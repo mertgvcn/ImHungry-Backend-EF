@@ -1,14 +1,13 @@
 ﻿using AutoMapper;
-using AutoMapper.Internal;
 using AutoMapper.QueryableExtensions;
 using ImHungryBackendER;
 using ImHungryBackendER.Models.ParameterModels;
 using ImHungryBackendER.Models.ViewModels;
 using ImHungryBackendER.Services.OtherServices.Interfaces;
+using ImHungryLibrary.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using WebAPI_Giris.Models;
 using WebAPI_Giris.Services.ControllerServices.Interfaces;
 using WebAPI_Giris.Services.OtherServices.Interfaces;
 

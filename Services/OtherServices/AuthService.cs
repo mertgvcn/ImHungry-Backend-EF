@@ -1,6 +1,6 @@
 ﻿using ImHungryBackendER;
 using ImHungryBackendER.Models.ParameterModels;
-using WebAPI_Giris.Models;
+using ImHungryLibrary.Models;
 using WebAPI_Giris.Services.ControllerServices.Interfaces;
 using WebAPI_Giris.Services.OtherServices.Interfaces;
 

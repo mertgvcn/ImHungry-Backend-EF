@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using WebAPI_Giris.Models;
+﻿using ImHungryLibrary.Models;
 
 namespace ImHungryBackendER.Models.ViewModels
 {

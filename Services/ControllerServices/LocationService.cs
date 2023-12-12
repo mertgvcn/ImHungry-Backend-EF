@@ -3,10 +3,10 @@ using AutoMapper.QueryableExtensions;
 using ImHungryBackendER;
 using ImHungryBackendER.Models.ParameterModels;
 using ImHungryBackendER.Models.ViewModels;
+using ImHungryLibrary.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
-using WebAPI_Giris.Models;
 using WebAPI_Giris.Services.ControllerServices.Interfaces;
 
 namespace WebAPI_Giris.Services.ControllerServices

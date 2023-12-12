@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using ImHungryBackendER.Models.ViewModels;
-using TypeSupport.Extensions;
-using WebAPI_Giris.Models;
+using ImHungryLibrary.Models;
 
 namespace ImHungryBackendER
 {
