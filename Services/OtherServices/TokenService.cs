@@ -1,4 +1,5 @@
 ﻿using ImHungryBackendER.Models.ParameterModels;
+using ImHungryLibrary.Models;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -20,14 +21,12 @@ namespace WebAPI_Giris.Services.OtherServices
         {
             SymmetricSecurityKey symmetricSecurityKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(configuration["AppSettings:Secret"]));
             var expireDate = DateTime.UtcNow.Add(TimeSpan.FromMinutes(500));
+            var claims = PrepareClaims(request.UserID, request.Roles);
 
             JwtSecurityToken jwt = new JwtSecurityToken(
                     issuer: configuration["AppSettings:ValidIssuer"],
                     audience: configuration["AppSettings:ValidAudience"],
-                    claims: new List<Claim>
-                    {
-                        new Claim(ClaimTypes.NameIdentifier, request.UserID)
-                    },
+                    claims: claims,
                     notBefore: DateTime.UtcNow,
                     expires: expireDate,
                     signingCredentials: new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256)
@@ -39,5 +38,22 @@ namespace WebAPI_Giris.Services.OtherServices
                 TokenExpireDate = expireDate
             });
         }
+
+        public List<Claim> PrepareClaims(string userID, List<Role> roles)
+        {
+            //Always need ID
+            var claims = new List<Claim>()
+            {
+                new Claim(ClaimTypes.NameIdentifier, userID)
+            };
+
+            //May have more than one claim
+            roles.ForEach(role =>
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role.RoleName));
+            });
+
+            return claims;
+        } 
     }
 }

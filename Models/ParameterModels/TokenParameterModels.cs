@@ -1,8 +1,11 @@
-﻿namespace ImHungryBackendER.Models.ParameterModels
+﻿using ImHungryLibrary.Models;
+
+namespace ImHungryBackendER.Models.ParameterModels
 {
     public class GenerateTokenRequest
     {
         public string UserID { get; set; }
+        public List<Role> Roles { get; set; }
     }
 
     public class GenerateTokenResponse

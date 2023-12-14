@@ -1,6 +1,7 @@
 ﻿using ImHungryBackendER;
 using ImHungryBackendER.Models.ParameterModels;
 using ImHungryLibrary.Models;
+using Microsoft.EntityFrameworkCore;
 using WebAPI_Giris.Services.ControllerServices.Interfaces;
 using WebAPI_Giris.Services.OtherServices.Interfaces;
 
@@ -39,14 +40,18 @@ namespace WebAPI_Giris.Services.OtherServices
             bool isLogin = false;
             string plainPassword = cryptionService.Decrypt(request.EncryptedPassword);
 
-            var user = _context.Users.Where(user => user.Username == request.Username).FirstOrDefault();
+            var user = _context.Users.Where(user => user.Username == request.Username)
+                            .Include(a => a.Roles).FirstOrDefault();
             if (user is null) return response;
 
             isLogin = BCrypt.Net.BCrypt.Verify(plainPassword, user.Password);
 
             if (isLogin)
             {
-                var generatedToken = await tokenService.GenerateToken(new GenerateTokenRequest { UserID = user.Id.ToString() });
+                var generatedToken = await tokenService.GenerateToken(new GenerateTokenRequest { 
+                    UserID = user.Id.ToString(),
+                    Roles = user.Roles.ToList(),
+                });
 
                 response.AuthenticateResult = true;
                 response.AuthToken = generatedToken.Token;
@@ -61,7 +66,7 @@ namespace WebAPI_Giris.Services.OtherServices
             UserRegisterResponse response = new();
             response.isSuccess = true;
 
-            //check if username already exists
+            //Check if username already exists
             if (await userService.VerifyUsername(new VerifyUsernameRequest { Username = user.Username } ))
             {
                 response.isSuccess = false;
@@ -72,6 +77,10 @@ namespace WebAPI_Giris.Services.OtherServices
             string password = cryptionService.Decrypt(user.Password); //The password comes encrypted from the frontend
             password = BCrypt.Net.BCrypt.HashPassword(password); //Hashing the password for security
 
+            //Assign initial role as "User".
+            var role = _context.Roles.Where(a => a.RoleName == "User").FirstOrDefault();
+            var roles = new List<Role>() { role };
+
             User newUser = new User()
             {
                 FirstName = user.FirstName,
@@ -79,7 +88,8 @@ namespace WebAPI_Giris.Services.OtherServices
                 Username = user.Username,
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber,
-                Password = password
+                Password = password,
+                Roles = roles
             };
 
             _context.Users.Add(newUser);
