@@ -10,9 +10,9 @@ namespace WebAPI_Giris.Services.OtherServices
     public class AuthService : IAuthService
     {
         private readonly ImHungryContext _context;
-        private readonly ICryptionService cryptionService;
-        private readonly ITokenService tokenService;
-        private readonly IUserService userService;
+        private readonly ICryptionService _cryptionService;
+        private readonly ITokenService _tokenService;
+        private readonly IUserService _userService;
 
         public AuthService(
             ImHungryContext context,
@@ -21,9 +21,9 @@ namespace WebAPI_Giris.Services.OtherServices
             IUserService userService)
         {
             _context = context;
-            this.cryptionService = cryptionService;
-            this.tokenService = tokenService;
-            this.userService = userService;
+            _cryptionService = cryptionService;
+            _tokenService = tokenService;
+            _userService = userService;
         }
 
         public async Task<long> GetIdByUsername(string Username)
@@ -38,7 +38,7 @@ namespace WebAPI_Giris.Services.OtherServices
         {
             UserLoginResponse response = new();
             bool isLogin = false;
-            string plainPassword = cryptionService.Decrypt(request.EncryptedPassword);
+            string plainPassword = _cryptionService.Decrypt(request.EncryptedPassword);
 
             var user = _context.Users.Where(user => user.Username == request.Username)
                             .Include(a => a.Roles).FirstOrDefault();
@@ -48,7 +48,7 @@ namespace WebAPI_Giris.Services.OtherServices
 
             if (isLogin)
             {
-                var generatedToken = await tokenService.GenerateToken(new GenerateTokenRequest { 
+                var generatedToken = await _tokenService.GenerateToken(new GenerateTokenRequest { 
                     UserID = user.Id.ToString(),
                     Roles = user.Roles.ToList(),
                 });
@@ -67,14 +67,14 @@ namespace WebAPI_Giris.Services.OtherServices
             response.isSuccess = true;
 
             //Check if username already exists
-            if (await userService.VerifyUsername(new VerifyUsernameRequest { Username = user.Username } ))
+            if (await _userService.VerifyUsername(new VerifyUsernameRequest { Username = user.Username } ))
             {
                 response.isSuccess = false;
                 response.ErrorMessage = "Invalid username";
                 return response;
             }
 
-            string password = cryptionService.Decrypt(user.Password); //The password comes encrypted from the frontend
+            string password = _cryptionService.Decrypt(user.Password); //The password comes encrypted from the frontend
             password = BCrypt.Net.BCrypt.HashPassword(password); //Hashing the password for security
 
             //Assign initial role as "User".

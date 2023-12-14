@@ -5,10 +5,10 @@ namespace WebAPI_Giris.Services.ControllerServices.Interfaces
 {
     public interface IRestaurantService
     {
-        public Task<JsonResult> GetRestaurantInformationByID(int restaurantID);
-        public Task<JsonResult> GetRestaurantListByLocation(GetRestaurantListByLocationRequest request);
+        Task<JsonResult> GetRestaurantInformationByID(int restaurantID);
+        Task<JsonResult> GetRestaurantListByLocation(GetRestaurantListByLocationRequest request);
         
-        public Task<JsonResult> GetRestaurantSummaryByID(int restaurantID);
-        public Task<JsonResult> GetRestaurantMenuByID(int restaurantID);
+        Task<JsonResult> GetRestaurantSummaryByID(int restaurantID);
+        Task<JsonResult> GetRestaurantMenuByID(int restaurantID);
     }
 }

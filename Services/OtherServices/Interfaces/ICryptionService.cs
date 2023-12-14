@@ -2,6 +2,6 @@
 {
     public interface ICryptionService
     {
-        public string Decrypt(string key);
+        string Decrypt(string key);
     }
 }

@@ -10,22 +10,23 @@ namespace WebAPI_Giris.Services.OtherServices
 {
     public class TokenService : ITokenService
     {
-        private readonly IConfiguration configuration;
+        private readonly IConfiguration _configuration;
 
         public TokenService(IConfiguration configuration)
         {
-            this.configuration = configuration;
+            _configuration = configuration;
         }
 
         public Task<GenerateTokenResponse> GenerateToken(GenerateTokenRequest request)
         {
-            SymmetricSecurityKey symmetricSecurityKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(configuration["AppSettings:Secret"]));
+            SymmetricSecurityKey symmetricSecurityKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_configuration["AppSettings:Secret"]));
+            
             var expireDate = DateTime.UtcNow.Add(TimeSpan.FromMinutes(500));
             var claims = PrepareClaims(request.UserID, request.Roles);
 
             JwtSecurityToken jwt = new JwtSecurityToken(
-                    issuer: configuration["AppSettings:ValidIssuer"],
-                    audience: configuration["AppSettings:ValidAudience"],
+                    issuer: _configuration["AppSettings:ValidIssuer"],
+                    audience: _configuration["AppSettings:ValidAudience"],
                     claims: claims,
                     notBefore: DateTime.UtcNow,
                     expires: expireDate,

@@ -5,6 +5,6 @@ namespace WebAPI_Giris.Services.ControllerServices.Interfaces
 {
     public interface IItemService
     {
-        public Task<JsonResult> GetItemIngredients(GetItemIngredientRequest request); 
+        Task<JsonResult> GetItemIngredients(GetItemIngredientRequest request); 
     }
 }

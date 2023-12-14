@@ -2,6 +2,6 @@
 {
     public interface IDbOperationHelperService
     {
-        public void MarkModifiedProperties<T>(T entity, ImHungryContext context);
+        void MarkModifiedProperties<T>(T entity, ImHungryContext context);
     }
 }

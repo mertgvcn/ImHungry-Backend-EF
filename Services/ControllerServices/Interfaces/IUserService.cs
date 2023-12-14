@@ -6,20 +6,20 @@ namespace WebAPI_Giris.Services.ControllerServices.Interfaces
 {
     public interface IUserService
     {
-        public Task<JsonResult> GetUserInfo();
-        public long GetCurrentUserID();
+        Task<JsonResult> GetUserInfo();
+        long GetCurrentUserID();
 
-        public Task<JsonResult> GetAccountInfo();
-        public Task SetAccountInfo(UserAccountViewModel request);
+        Task<JsonResult> GetAccountInfo();
+        Task SetAccountInfo(UserAccountViewModel request);
 
-        public Task<JsonResult> GetCurrentLocation();
-        public Task SetCurrentLocation(SetCurrentLocationRequest request);
+        Task<JsonResult> GetCurrentLocation();
+        Task SetCurrentLocation(SetCurrentLocationRequest request);
 
-        public Task<bool> VerifyUsername(VerifyUsernameRequest request);
-        public Task<bool> VerifyEmail(VerifyEmailRequest request);
-        public Task<bool> VerifyPassword(VerifyPasswordRequest request);
+        Task<bool> VerifyUsername(VerifyUsernameRequest request);
+        Task<bool> VerifyEmail(VerifyEmailRequest request);
+        Task<bool> VerifyPassword(VerifyPasswordRequest request);
 
-        public Task<bool> iForgotMyPassword(iForgotMyPasswordRequest request);
-        public Task ChangePassword(ChangePasswordRequest request);
+        Task<bool> iForgotMyPassword(iForgotMyPasswordRequest request);
+        Task ChangePassword(ChangePasswordRequest request);
     }
 }

@@ -5,9 +5,9 @@ namespace WebAPI_Giris.Services.ControllerServices.Interfaces
 {
     public interface ILocationService
     {
-        public Task<JsonResult> GetUserLocationList();
+        Task<JsonResult> GetUserLocationList();
 
-        public Task AddLocation(AddLocationRequest request);
-        public Task DeleteLocationByLocationID(long locationID);
+        Task AddLocation(AddLocationRequest request);
+        Task DeleteLocationByLocationID(long locationID);
     }
 }
