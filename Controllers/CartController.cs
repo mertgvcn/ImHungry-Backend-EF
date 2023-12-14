@@ -7,8 +7,8 @@ namespace WebAPI_Giris.Controllers
 {
 
     [Route("api/[controller]")]
-    [Authorize]
     [ApiController]
+    [Authorize(Roles = "User")]
     public class CartController : Controller
     {
         private readonly ICartService cartService;

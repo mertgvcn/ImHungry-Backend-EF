@@ -6,8 +6,8 @@ using WebAPI_Giris.Services.ControllerServices.Interfaces;
 namespace WebAPI_Giris.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize]
     [ApiController]
+    [Authorize(Roles = "User")]
     public class LocationController : Controller
     {
         private readonly ILocationService locationService;

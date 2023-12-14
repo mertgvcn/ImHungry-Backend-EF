@@ -1,5 +1,4 @@
 ﻿using ImHungryBackendER.Services.ControllerServices.Interfaces;
-using ImHungryLibrary.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

@@ -7,7 +7,7 @@ namespace WebAPI_Giris.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(Roles = "User")]
     public class ItemController : Controller
     {
         private readonly IItemService itemService;

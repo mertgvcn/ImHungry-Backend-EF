@@ -17,6 +17,8 @@ using ImHungryBackendER;
 using AutoMapper;
 using ImHungryBackendER.Services.OtherServices.Interfaces;
 using ImHungryBackendER.Services.OtherServices;
+using ImHungryBackendER.Services.ControllerServices.Interfaces;
+using ImHungryBackendER.Services.ControllerServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -62,6 +64,7 @@ builder.Services.AddTransient<ILocationService, LocationService>();
 builder.Services.AddTransient<ICreditCardService, CreditCardService>();
 builder.Services.AddTransient<ICartService, CartService>();
 builder.Services.AddTransient<IItemService, ItemService>();
+builder.Services.AddTransient<IRoleService, RoleService>();
 builder.Services.AddTransient<IDbOperationHelperService, DbOperationHelperService>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()); //need for automapper
 

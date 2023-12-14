@@ -1,4 +1,5 @@
 ﻿using ImHungryBackendER.Models.ParameterModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI_Giris.Services.ControllerServices.Interfaces;
 
@@ -6,6 +7,7 @@ namespace WebAPI_Giris.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [AllowAnonymous]
     public class RestaurantController : Controller
     {
         private readonly IRestaurantService restaurantService;
