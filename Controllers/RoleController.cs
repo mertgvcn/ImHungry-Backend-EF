@@ -1,4 +1,5 @@
-﻿using ImHungryLibrary.Models;
+﻿using ImHungryBackendER.Services.ControllerServices.Interfaces;
+using ImHungryLibrary.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,26 +7,20 @@ namespace ImHungryBackendER.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [AllowAnonymous]
+    [Authorize(Roles = "Admin")]
     public class RoleController : Controller
     {
-        private readonly ImHungryContext _context;
+        private readonly IRoleService _roleService;
 
-        public RoleController(ImHungryContext context)
+        public RoleController(IRoleService roleService)
         {
-            _context = context;
+            _roleService = roleService;
         }
 
         [HttpPost("AddRole")]
-        public async Task AddRole(string roleName)
+        public async Task AddRole([FromQuery] string roleName)
         {
-            var newRole = new Role()
-            {
-                RoleName = roleName
-            };
-
-            _context.Roles.Add(newRole);
-            await _context.SaveChangesAsync();
+            _roleService.AddRole(roleName);
         }
     }
 }
