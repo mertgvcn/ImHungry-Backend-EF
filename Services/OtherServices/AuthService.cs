@@ -56,6 +56,7 @@ namespace WebAPI_Giris.Services.OtherServices
                 response.AuthenticateResult = true;
                 response.AuthToken = generatedToken.Token;
                 response.AccessTokenExpireDate = generatedToken.TokenExpireDate;
+                response.Roles = user.Roles.Select(a => a.RoleName).ToList();
             }
 
             return await Task.FromResult(response);
