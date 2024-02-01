@@ -2822,8 +2822,8 @@
     },
     "ImHungryLibrary/1.0.0": {
       "type": "project",
-      "path": "../ImHungryLibrary/ImHungryLibrary.csproj",
-      "msbuildProject": "../ImHungryLibrary/ImHungryLibrary.csproj"
+      "path": "ImHungryLibrary/ImHungryLibrary.csproj",
+      "msbuildProject": "ImHungryLibrary/ImHungryLibrary.csproj"
     }
   },
   "projectFileDependencyGroups": {
@@ -2873,8 +2873,8 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "projectReferences": {
-            "C:\\Users\\mertg\\source\\repos\\ImHungryLibrary\\ImHungryLibrary.csproj": {
-              "projectPath": "C:\\Users\\mertg\\source\\repos\\ImHungryLibrary\\ImHungryLibrary.csproj"
+            "C:\\Users\\mertg\\source\\repos\\ImHungry-Backend-ER\\ImHungryLibrary\\ImHungryLibrary.csproj": {
+              "projectPath": "C:\\Users\\mertg\\source\\repos\\ImHungry-Backend-ER\\ImHungryLibrary\\ImHungryLibrary.csproj"
             }
           }
         }

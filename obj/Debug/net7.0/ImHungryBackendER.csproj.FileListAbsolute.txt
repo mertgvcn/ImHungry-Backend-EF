@@ -1,7 +1,5 @@
 C:\Users\mertg\source\repos\ImHungry-Backend-ER\obj\Debug\net7.0\ImHungryBackendER.csproj.AssemblyReference.cache
 C:\Users\mertg\source\repos\ImHungry-Backend-ER\obj\Debug\net7.0\ImHungryBackendER.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\mertg\source\repos\ImHungry-Backend-ER\obj\Debug\net7.0\ImHungryBackendER.AssemblyInfoInputs.cache
-C:\Users\mertg\source\repos\ImHungry-Backend-ER\obj\Debug\net7.0\ImHungryBackendER.AssemblyInfo.cs
 C:\Users\mertg\source\repos\ImHungry-Backend-ER\obj\Debug\net7.0\ImHungryBackendER.csproj.CoreCompileInputs.cache
 C:\Users\mertg\source\repos\ImHungry-Backend-ER\obj\Debug\net7.0\ImHungryBackendER.MvcApplicationPartsAssemblyInfo.cs
 C:\Users\mertg\source\repos\ImHungry-Backend-ER\obj\Debug\net7.0\ImHungryBackendER.MvcApplicationPartsAssemblyInfo.cache
@@ -41,8 +39,6 @@ C:\Users\mertg\source\repos\ImHungry-Backend-ER\bin\Debug\net7.0\Swashbuckle.Asp
 C:\Users\mertg\source\repos\ImHungry-Backend-ER\bin\Debug\net7.0\Swashbuckle.AspNetCore.SwaggerGen.dll
 C:\Users\mertg\source\repos\ImHungry-Backend-ER\bin\Debug\net7.0\Swashbuckle.AspNetCore.SwaggerUI.dll
 C:\Users\mertg\source\repos\ImHungry-Backend-ER\bin\Debug\net7.0\System.IdentityModel.Tokens.Jwt.dll
-C:\Users\mertg\source\repos\ImHungry-Backend-ER\bin\Debug\net7.0\ImHungryLibrary.dll
-C:\Users\mertg\source\repos\ImHungry-Backend-ER\bin\Debug\net7.0\ImHungryLibrary.pdb
 C:\Users\mertg\source\repos\ImHungry-Backend-ER\obj\Debug\net7.0\staticwebassets\msbuild.ImHungryBackendER.Microsoft.AspNetCore.StaticWebAssets.props
 C:\Users\mertg\source\repos\ImHungry-Backend-ER\obj\Debug\net7.0\staticwebassets\msbuild.build.ImHungryBackendER.props
 C:\Users\mertg\source\repos\ImHungry-Backend-ER\obj\Debug\net7.0\staticwebassets\msbuild.buildMultiTargeting.ImHungryBackendER.props
@@ -60,3 +56,5 @@ C:\Users\mertg\source\repos\ImHungry-Backend-ER\obj\Debug\net7.0\ref\ImHungryBac
 C:\Users\mertg\source\repos\ImHungry-Backend-ER\bin\Debug\net7.0\AutoMapper.dll
 C:\Users\mertg\source\repos\ImHungry-Backend-ER\bin\Debug\net7.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
 C:\Users\mertg\source\repos\ImHungry-Backend-ER\bin\Debug\net7.0\TypeSupport.dll
+C:\Users\mertg\source\repos\ImHungry-Backend-ER\bin\Debug\net7.0\ImHungryLibrary.dll
+C:\Users\mertg\source\repos\ImHungry-Backend-ER\bin\Debug\net7.0\ImHungryLibrary.pdb

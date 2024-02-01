@@ -5,7 +5,6 @@ using WebAPI_Giris.Services.ControllerServices.Interfaces;
 
 namespace WebAPI_Giris.Controllers
 {
-
     [Route("api/[controller]")]
     [ApiController]
     [Authorize(Roles = "User")]

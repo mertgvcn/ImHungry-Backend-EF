@@ -8,6 +8,7 @@ namespace WebAPI_Giris.Services.ControllerServices.Interfaces
     {
         Task<JsonResult> GetUserInfo();
         long GetCurrentUserID();
+        List<string> GetCurrentUserRoles();
 
         Task<JsonResult> GetAccountInfo();
         Task SetAccountInfo(UserAccountViewModel request);

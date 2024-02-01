@@ -1,5 +1,6 @@
 ﻿using ImHungryBackendER.Models.ParameterModels;
 using ImHungryLibrary.Models;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;

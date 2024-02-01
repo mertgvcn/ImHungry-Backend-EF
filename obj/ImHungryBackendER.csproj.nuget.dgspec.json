@@ -29,8 +29,8 @@
           "net7.0": {
             "targetAlias": "net7.0",
             "projectReferences": {
-              "C:\\Users\\mertg\\source\\repos\\ImHungryLibrary\\ImHungryLibrary.csproj": {
-                "projectPath": "C:\\Users\\mertg\\source\\repos\\ImHungryLibrary\\ImHungryLibrary.csproj"
+              "C:\\Users\\mertg\\source\\repos\\ImHungry-Backend-ER\\ImHungryLibrary\\ImHungryLibrary.csproj": {
+                "projectPath": "C:\\Users\\mertg\\source\\repos\\ImHungry-Backend-ER\\ImHungryLibrary\\ImHungryLibrary.csproj"
               }
             }
           }
@@ -129,14 +129,14 @@
         }
       }
     },
-    "C:\\Users\\mertg\\source\\repos\\ImHungryLibrary\\ImHungryLibrary.csproj": {
+    "C:\\Users\\mertg\\source\\repos\\ImHungry-Backend-ER\\ImHungryLibrary\\ImHungryLibrary.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\mertg\\source\\repos\\ImHungryLibrary\\ImHungryLibrary.csproj",
+        "projectUniqueName": "C:\\Users\\mertg\\source\\repos\\ImHungry-Backend-ER\\ImHungryLibrary\\ImHungryLibrary.csproj",
         "projectName": "ImHungryLibrary",
-        "projectPath": "C:\\Users\\mertg\\source\\repos\\ImHungryLibrary\\ImHungryLibrary.csproj",
+        "projectPath": "C:\\Users\\mertg\\source\\repos\\ImHungry-Backend-ER\\ImHungryLibrary\\ImHungryLibrary.csproj",
         "packagesPath": "C:\\Users\\mertg\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\mertg\\source\\repos\\ImHungryLibrary\\obj\\",
+        "outputPath": "C:\\Users\\mertg\\source\\repos\\ImHungry-Backend-ER\\ImHungryLibrary\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\mertg\\AppData\\Roaming\\NuGet\\NuGet.Config",

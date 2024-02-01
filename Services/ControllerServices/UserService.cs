@@ -5,13 +5,14 @@ using ImHungryBackendER.Models.ParameterModels;
 using ImHungryBackendER.Models.ViewModels;
 using ImHungryBackendER.Services.OtherServices.Interfaces;
 using ImHungryLibrary.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using WebAPI_Giris.Services.ControllerServices.Interfaces;
 using WebAPI_Giris.Services.OtherServices.Interfaces;
 
-namespace WebAPI_Giris.Services.ControllerServices
+namespace ImHungryBackendER.Services.ControllerServices
 {
     #pragma warning disable //removes error lines
     public class UserService : IUserService
@@ -57,13 +58,25 @@ namespace WebAPI_Giris.Services.ControllerServices
         {
             if (_httpContextAccessor.HttpContext is not null)
             {
-                var result = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-                return int.Parse(result);
+                var userID = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                return int.Parse(userID);
             }
             
             return -1;
         }
 
+        //Get user roles from claim that inside the api token
+        public List<string> GetCurrentUserRoles()
+        {
+            if (_httpContextAccessor.HttpContext is not null)
+            {
+                var roleClaims = _httpContextAccessor.HttpContext.User.FindAll(ClaimTypes.Role);
+                var roles = roleClaims.Select(a => a.Value).ToList();
+                return roles;
+            }
+
+            return null;
+        }
 
         //Get account info, not include password
         public async Task<JsonResult> GetAccountInfo()
