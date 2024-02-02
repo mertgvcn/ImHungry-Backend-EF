@@ -14,6 +14,8 @@ namespace ImHungryLibrary.Models
 
         public long UserId { get; set; }
 
+        public User User { get; set; }
+
         public Restaurant Restaurant { get; set; }
 
         public Item Item { get; set; }

@@ -1,4 +1,5 @@
 ﻿using ImHungryLibrary;
+using ImHungryLibrary.Configruations;
 using ImHungryLibrary.Models;
 using Microsoft.EntityFrameworkCore;
 namespace ImHungryBackendER
@@ -43,6 +44,13 @@ namespace ImHungryBackendER
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            //Configurations
+            modelBuilder.ApplyConfiguration(new RestaurantConfiguration());
+
+            modelBuilder.BuildIndex();
+           modelBuilder.Entity<User>().HasMany(a => a.CartItems)
+                .WithOne(a => a.User).OnDelete(DeleteBehavior.Cascade);
+
             base.OnModelCreating(modelBuilder);
 
         }

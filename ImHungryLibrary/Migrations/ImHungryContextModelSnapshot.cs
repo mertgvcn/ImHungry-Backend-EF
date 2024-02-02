@@ -47,7 +47,7 @@ namespace ImHungryLibrary.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Auditlog");
+                    b.ToTable("Auditlog", (string)null);
                 });
 
             modelBuilder.Entity("ImHungryLibrary.Models.Cart", b =>
@@ -82,7 +82,7 @@ namespace ImHungryLibrary.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("CartItems");
+                    b.ToTable("CartItems", (string)null);
                 });
 
             modelBuilder.Entity("ImHungryLibrary.Models.Category", b =>
@@ -100,7 +100,7 @@ namespace ImHungryLibrary.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("ImHungryLibrary.Models.CreditCard", b =>
@@ -136,7 +136,7 @@ namespace ImHungryLibrary.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("CreditCards");
+                    b.ToTable("CreditCards", (string)null);
                 });
 
             modelBuilder.Entity("ImHungryLibrary.Models.Ingredient", b =>
@@ -154,7 +154,7 @@ namespace ImHungryLibrary.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Ingredients");
+                    b.ToTable("Ingredients", (string)null);
                 });
 
             modelBuilder.Entity("ImHungryLibrary.Models.Item", b =>
@@ -193,7 +193,7 @@ namespace ImHungryLibrary.Migrations
 
                     b.HasIndex("RestaurantId");
 
-                    b.ToTable("Items");
+                    b.ToTable("Items", (string)null);
                 });
 
             modelBuilder.Entity("ImHungryLibrary.Models.Restaurant", b =>
@@ -205,8 +205,8 @@ namespace ImHungryLibrary.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Description")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -222,19 +222,27 @@ namespace ImHungryLibrary.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("character varying(30)");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<long?>("OwnerId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
 
+                    b.Property<long>("SpecialId")
+                        .HasColumnType("bigint");
+
                     b.HasKey("Id");
 
                     b.HasIndex("LocationId");
 
-                    b.ToTable("Restaurants");
+                    b.HasIndex("OwnerId");
+
+                    b.ToTable("Restaurants", (string)null);
                 });
 
             modelBuilder.Entity("ImHungryLibrary.Models.RestaurantLocation", b =>
@@ -280,7 +288,7 @@ namespace ImHungryLibrary.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("RestaurantsLocations");
+                    b.ToTable("RestaurantsLocations", (string)null);
                 });
 
             modelBuilder.Entity("ImHungryLibrary.Models.Role", b =>
@@ -298,7 +306,7 @@ namespace ImHungryLibrary.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles");
+                    b.ToTable("Roles", (string)null);
                 });
 
             modelBuilder.Entity("ImHungryLibrary.Models.User", b =>
@@ -346,7 +354,7 @@ namespace ImHungryLibrary.Migrations
 
                     b.HasIndex("CurrentLocationId");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("ImHungryLibrary.Models.UserLocation", b =>
@@ -404,7 +412,7 @@ namespace ImHungryLibrary.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserLocations");
+                    b.ToTable("UserLocations", (string)null);
                 });
 
             modelBuilder.Entity("IngredientItem", b =>
@@ -419,7 +427,7 @@ namespace ImHungryLibrary.Migrations
 
                     b.HasIndex("ItemsId");
 
-                    b.ToTable("IngredientItem");
+                    b.ToTable("IngredientItem", (string)null);
                 });
 
             modelBuilder.Entity("RoleUser", b =>
@@ -434,7 +442,7 @@ namespace ImHungryLibrary.Migrations
 
                     b.HasIndex("UsersId");
 
-                    b.ToTable("RoleUser");
+                    b.ToTable("RoleUser", (string)null);
                 });
 
             modelBuilder.Entity("ImHungryLibrary.Models.Cart", b =>
@@ -451,7 +459,7 @@ namespace ImHungryLibrary.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ImHungryLibrary.Models.User", null)
+                    b.HasOne("ImHungryLibrary.Models.User", "User")
                         .WithMany("CartItems")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -460,6 +468,8 @@ namespace ImHungryLibrary.Migrations
                     b.Navigation("Item");
 
                     b.Navigation("Restaurant");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ImHungryLibrary.Models.CreditCard", b =>
@@ -496,7 +506,13 @@ namespace ImHungryLibrary.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("ImHungryLibrary.Models.User", "Owner")
+                        .WithMany()
+                        .HasForeignKey("OwnerId");
+
                     b.Navigation("Location");
+
+                    b.Navigation("Owner");
                 });
 
             modelBuilder.Entity("ImHungryLibrary.Models.User", b =>

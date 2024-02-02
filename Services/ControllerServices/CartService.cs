@@ -28,7 +28,6 @@ namespace WebAPI_Giris.Services.ControllerServices
         {
             var cartItems = await GetUserCartItemList();
             var cartItemNumber = await GetUserCartItemNumber();
-
             var cartInfo = new
             {
                 cartItems = cartItems.Value,

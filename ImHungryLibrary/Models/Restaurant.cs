@@ -7,6 +7,8 @@ namespace ImHungryLibrary.Models
         [Key]
         public long Id { get; private set; }
 
+        public bool IsActive { get; set; } = true;
+             
         [MaxLength(30)]
         public string Name { get; set; }
 
@@ -25,5 +27,8 @@ namespace ImHungryLibrary.Models
         public ICollection<Item> Items { get; set; }
 
         public RestaurantLocation Location { get; set; }
+
+        public long? OwnerId { get; set; }
+        public User? Owner { get; set; } = default!;
     }
 }

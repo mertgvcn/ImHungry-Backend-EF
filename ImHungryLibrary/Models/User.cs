@@ -33,6 +33,7 @@ namespace ImHungryLibrary.Models
 
         public ICollection<Role> Roles { get; set; }
 
+        public long? CurrentLocationId { get; set; }
         public UserLocation? CurrentLocation { get; set; }
 
     }
