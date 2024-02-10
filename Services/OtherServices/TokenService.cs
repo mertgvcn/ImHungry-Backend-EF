@@ -53,6 +53,7 @@ namespace WebAPI_Giris.Services.OtherServices
             roles.ForEach(role =>
             {
                 claims.Add(new Claim(ClaimTypes.Role, role.RoleName));
+                claims.Add(new Claim("Role", role.RoleName));
             });
 
             return claims;

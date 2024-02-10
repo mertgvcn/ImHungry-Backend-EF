@@ -45,11 +45,12 @@ namespace ImHungryBackendER
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //Configurations
-            modelBuilder.ApplyConfiguration(new RestaurantConfiguration());
+            //modelBuilder.ApplyConfiguration(new RestaurantConfiguration());
 
-            modelBuilder.BuildIndex();
-           modelBuilder.Entity<User>().HasMany(a => a.CartItems)
-                .WithOne(a => a.User).OnDelete(DeleteBehavior.Cascade);
+            //modelBuilder.BuildIndex();
+
+            //modelBuilder.Entity<User>().HasMany(a => a.CartItems) //user silinince cart itemlarıda silinecek örneği
+            //   .WithOne(a => a.User).OnDelete(DeleteBehavior.Cascade);
 
             base.OnModelCreating(modelBuilder);
 

@@ -3,17 +3,12 @@ using ImHungryLibrary.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ImHungryLibrary
 {
     public static class ImHungryContextExtension
     {
-
+        //No need for update-database, this func does it when program starts
         public static IHost AutoMigrateDatabase(this IHost app)
         {
             using var scope = app.Services.GetService<IServiceScopeFactory>()!.CreateScope();
@@ -35,12 +30,10 @@ namespace ImHungryLibrary
 
         public static void BuildIndex(this ModelBuilder modelBuilder)
         {
-
             modelBuilder.Entity<Restaurant>().HasIndex(a => new { a.OwnerId });
             modelBuilder.Entity<User>().HasIndex(a => new { a.CurrentLocationId });
         }
         
-
     }
 
 }
