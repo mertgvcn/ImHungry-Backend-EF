@@ -28,6 +28,7 @@ namespace ImHungryLibrary
             return app;
         }
 
+        //Database indexleme
         public static void BuildIndex(this ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Restaurant>().HasIndex(a => new { a.OwnerId });

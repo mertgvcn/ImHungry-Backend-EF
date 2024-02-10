@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ImHungryLibrary.Migrations
 {
     [DbContext(typeof(ImHungryContext))]
-    [Migration("20240202123509_IndexesOnDataBaseAndConfigAndCascade")]
-    partial class IndexesOnDataBaseAndConfigAndCascade
+    [Migration("20240210212642_RestaurantOwnerAndIsActiveAdded")]
+    partial class RestaurantOwnerAndIsActiveAdded
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -207,8 +207,8 @@ namespace ImHungryLibrary.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Description")
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -219,13 +219,16 @@ namespace ImHungryLibrary.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
                     b.Property<long>("LocationId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
 
                     b.Property<long?>("OwnerId")
                         .HasColumnType("bigint");
@@ -234,9 +237,6 @@ namespace ImHungryLibrary.Migrations
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
-
-                    b.Property<long>("SpecialId")
-                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 

@@ -23,6 +23,7 @@ namespace ImHungryBackendER
         public DbSet<Role> Roles { get; set; }
         private DbSet<AuditLog> Auditlog { get; set; }
 
+        //Save changes'i override edip log ekleyebiliriz.
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             var ChangedObject = ChangeTracker.Entries().Where(a => a.State == EntityState.Modified || a.State == EntityState.Added || a.State == EntityState.Deleted).ToList();
@@ -32,7 +33,6 @@ namespace ImHungryBackendER
                
                 this.Auditlog.Add(new AuditLog()
                 {
-
                     Object = item.Entity.ToString(),
                     Name = "MERT Kullanici ekle EKLE AMK",
                     Mutation = item.State.ToString()
@@ -53,7 +53,6 @@ namespace ImHungryBackendER
             //   .WithOne(a => a.User).OnDelete(DeleteBehavior.Cascade);
 
             base.OnModelCreating(modelBuilder);
-
         }
     }
 }
