@@ -1,9 +1,5 @@
-﻿using ImHungryBackendER.Services.ControllerServices.Interfaces;
-using ImHungryBackendER.Services.ControllerServices;
-using ImHungryBackendER.Services.OtherServices.Interfaces;
+﻿using ImHungryBackendER.Services.OtherServices.Interfaces;
 using ImHungryBackendER.Services.OtherServices;
-using WebAPI_Giris.Services.ControllerServices.Interfaces;
-using WebAPI_Giris.Services.ControllerServices;
 using WebAPI_Giris.Services.OtherServices.Interfaces;
 using WebAPI_Giris.Services.OtherServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -11,6 +7,10 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
+using ImHungryBackendER.Services.ControllerServices.CustomerServices;
+using ImHungryBackendER.Services.ControllerServices.CustomerServices.Interfaces;
+using ImHungryBackendER.Services.ControllerServices.NeutralServices.Interfaces;
+using ImHungryBackendER.Services.ControllerServices.NeutralServices;
 
 namespace ImHungryBackendER
 {
@@ -47,11 +47,8 @@ namespace ImHungryBackendER
             builder.Services.AddTransient<ICreditCardService, CreditCardService>();
             builder.Services.AddTransient<ICartService, CartService>();
             builder.Services.AddTransient<IItemService, ItemService>();
-            builder.Services.AddTransient<IRoleService, RoleService>();
             builder.Services.AddTransient<IDbOperationHelperService, DbOperationHelperService>();
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()); //need for automapper
-
-
         }
 
         public static void ConfigureAuthorization(this WebApplicationBuilder builder)

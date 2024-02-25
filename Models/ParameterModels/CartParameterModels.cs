@@ -1,6 +1,5 @@
-﻿using WebAPI_Giris.Services.ControllerServices.Interfaces;
+﻿namespace ImHungryBackendER.Models.ParameterModels
 
-namespace ImHungryBackendER.Models.ParameterModels
 {
     public class CartTransactionRequest
     {

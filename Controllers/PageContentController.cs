@@ -1,9 +1,12 @@
-﻿using ImHungryBackendER.Models.ParameterModels;
+﻿using ImHungryBackendER.Controllers.NeutralAPIs;
+using ImHungryBackendER.Controllers.UserAPIs;
+using ImHungryBackendER.Models.ParameterModels;
 using ImHungryBackendER.Models.ViewModels;
+using ImHungryBackendER.Services.ControllerServices.CustomerServices.Interfaces;
+using ImHungryBackendER.Services.ControllerServices.NeutralServices.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using WebAPI_Giris.Services.ControllerServices.Interfaces;
 using WebAPI_Giris.Services.OtherServices.Interfaces;
 
 namespace WebAPI_Giris.Controllers

@@ -1,24 +1,6 @@
-using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Serialization;
-using Npgsql;
-using System.Data.Common;
-using WebAPI_Giris;
-using Microsoft.Extensions.Options;
-using Swashbuckle.AspNetCore.Filters;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using WebAPI_Giris.Services.OtherServices.Interfaces;
-using WebAPI_Giris.Services.OtherServices;
-using WebAPI_Giris.Services.ControllerServices.Interfaces;
-using WebAPI_Giris.Services.ControllerServices;
 using Microsoft.EntityFrameworkCore;
 using ImHungryBackendER;
-using AutoMapper;
-using ImHungryBackendER.Services.OtherServices.Interfaces;
-using ImHungryBackendER.Services.OtherServices;
-using ImHungryBackendER.Services.ControllerServices.Interfaces;
-using ImHungryBackendER.Services.ControllerServices;
 using ImHungryLibrary;
 
 var builder = WebApplication.CreateBuilder(args);
