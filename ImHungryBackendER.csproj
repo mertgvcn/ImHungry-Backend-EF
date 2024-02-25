@@ -46,9 +46,6 @@
   <ItemGroup>
     <ProjectReference Include="ImHungryLibrary\ImHungryLibrary.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Services\ControllerServices\RestaurantManagementServices\Interfaces\" />
-  </ItemGroup>
 
 
 

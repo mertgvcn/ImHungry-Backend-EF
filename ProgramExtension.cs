@@ -11,6 +11,8 @@ using ImHungryBackendER.Services.ControllerServices.CustomerServices;
 using ImHungryBackendER.Services.ControllerServices.CustomerServices.Interfaces;
 using ImHungryBackendER.Services.ControllerServices.NeutralServices.Interfaces;
 using ImHungryBackendER.Services.ControllerServices.NeutralServices;
+using ImHungryBackendER.Services.ControllerServices.RestaurantManagementServices.Interfaces;
+using ImHungryBackendER.Services.ControllerServices.RestaurantManagementServices;
 
 namespace ImHungryBackendER
 {
@@ -38,15 +40,21 @@ namespace ImHungryBackendER
 
         public static void ConfigureServices(this WebApplicationBuilder builder)
         {
+            //NeutralServices
             builder.Services.AddTransient<IAuthService, AuthService>();
-            builder.Services.AddTransient<ICryptionService, CryptionService>();
-            builder.Services.AddTransient<ITokenService, TokenService>();
-            builder.Services.AddTransient<IUserService, UserService>();
+            builder.Services.AddTransient<IItemService, ItemService>();
             builder.Services.AddTransient<IRestaurantService, RestaurantService>();
+            //RestaurantManagementServices
+            builder.Services.AddTransient<IRestaurantManagerService, RestaurantManagerService>();
+            builder.Services.AddTransient<IMenuService, MenuService>();
+            //UserServices
+            builder.Services.AddTransient<IUserService, UserService>();
+            builder.Services.AddTransient<ICartService, CartService>();
             builder.Services.AddTransient<ILocationService, LocationService>();
             builder.Services.AddTransient<ICreditCardService, CreditCardService>();
-            builder.Services.AddTransient<ICartService, CartService>();
-            builder.Services.AddTransient<IItemService, ItemService>();
+            //Others
+            builder.Services.AddTransient<ICryptionService, CryptionService>();
+            builder.Services.AddTransient<ITokenService, TokenService>();
             builder.Services.AddTransient<IDbOperationHelperService, DbOperationHelperService>();
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()); //need for automapper
         }
