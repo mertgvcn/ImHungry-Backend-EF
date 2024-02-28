@@ -18,8 +18,10 @@ namespace ImHungryLibrary.Models
 
         public double Price { get; set; }
 
+        public long RestaurantId { get; set; }
         public Restaurant Restaurant { get; set; }
 
+        public long CategoryId { get; set; }
         public Category Category { get; set; }
 
         public ICollection<Ingredient>? Ingredients { get; set;}

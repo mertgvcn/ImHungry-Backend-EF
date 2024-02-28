@@ -21,7 +21,7 @@ namespace ImHungryBackendER.Services.ControllerServices.NeutralServices
             _mapper = mapper;
         }
 
-        public async Task<JsonResult> GetRestaurantInformationByID(int restaurantID)
+        public async Task<JsonResult> GetRestaurantInformationByID(long restaurantID)
         {
             var restaurantDetails = await GetRestaurantSummaryByID(restaurantID);
             var menu = await GetRestaurantMenuByID(restaurantID);
@@ -47,7 +47,7 @@ namespace ImHungryBackendER.Services.ControllerServices.NeutralServices
             return new JsonResult(restaurantList);
         }
 
-        public async Task<JsonResult> GetRestaurantSummaryByID(int restaurantID)
+        public async Task<JsonResult> GetRestaurantSummaryByID(long restaurantID)
         {
             var restaurantBriefInformation = _context.Restaurants
                                                 .Where(restaurant => restaurant.Id == restaurantID)
@@ -57,7 +57,7 @@ namespace ImHungryBackendER.Services.ControllerServices.NeutralServices
             return new JsonResult(restaurantBriefInformation);
         }
 
-        public async Task<JsonResult> GetRestaurantMenuByID(int restaurantID)
+        public async Task<JsonResult> GetRestaurantMenuByID(long restaurantID)
         {
             var restaurantMenu = _context.Items
                                     .Where(a => a.Restaurant.Id == restaurantID)

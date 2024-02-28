@@ -5,10 +5,10 @@ namespace ImHungryBackendER.Services.ControllerServices.NeutralServices.Interfac
 {
     public interface IRestaurantService
     {
-        Task<JsonResult> GetRestaurantInformationByID(int restaurantID);
+        Task<JsonResult> GetRestaurantInformationByID(long restaurantID);
         Task<JsonResult> GetRestaurantListByLocation(GetRestaurantListByLocationRequest request);
 
-        Task<JsonResult> GetRestaurantSummaryByID(int restaurantID);
-        Task<JsonResult> GetRestaurantMenuByID(int restaurantID);
+        Task<JsonResult> GetRestaurantSummaryByID(long restaurantID);
+        Task<JsonResult> GetRestaurantMenuByID(long restaurantID);
     }
 }
