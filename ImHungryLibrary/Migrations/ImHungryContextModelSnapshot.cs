@@ -98,7 +98,12 @@ namespace ImHungryLibrary.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
+                    b.Property<long>("RestaurantId")
+                        .HasColumnType("bigint");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("RestaurantId");
 
                     b.ToTable("Categories");
                 });
@@ -470,6 +475,17 @@ namespace ImHungryLibrary.Migrations
                     b.Navigation("Restaurant");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ImHungryLibrary.Models.Category", b =>
+                {
+                    b.HasOne("ImHungryLibrary.Models.Restaurant", "Restaurant")
+                        .WithMany()
+                        .HasForeignKey("RestaurantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Restaurant");
                 });
 
             modelBuilder.Entity("ImHungryLibrary.Models.CreditCard", b =>

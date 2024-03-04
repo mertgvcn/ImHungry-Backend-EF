@@ -10,5 +10,6 @@ namespace ImHungryBackendER.Services.ControllerServices.NeutralServices.Interfac
 
         Task<JsonResult> GetRestaurantSummaryByID(long restaurantID);
         Task<JsonResult> GetRestaurantMenuByID(long restaurantID);
+        Task<JsonResult> GetCategoriesByID(long restaurantID);
     }
 }

@@ -25,11 +25,13 @@ namespace ImHungryBackendER.Services.ControllerServices.NeutralServices
         {
             var restaurantDetails = await GetRestaurantSummaryByID(restaurantID);
             var menu = await GetRestaurantMenuByID(restaurantID);
+            var categories = await GetCategoriesByID(restaurantID);
 
             var restaurantInfo = new
             {
                 restaurantDetails = restaurantDetails.Value,
-                menu = menu.Value
+                menu = menu.Value,
+                categories = categories.Value
             };
 
             return new JsonResult(restaurantInfo);
@@ -66,6 +68,15 @@ namespace ImHungryBackendER.Services.ControllerServices.NeutralServices
                                     .ToList().OrderBy(a => a.Category.Id);
 
             return new JsonResult(restaurantMenu);
+        }
+
+        public async Task<JsonResult> GetCategoriesByID(long restaurantID)
+        {
+            var categories = _context.Categories
+                                .Where(a => a.RestaurantId == restaurantID)
+                                .ToList();
+
+            return new JsonResult(categories);
         }
     }
 }
