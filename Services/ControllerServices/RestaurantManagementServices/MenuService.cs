@@ -48,10 +48,12 @@ namespace ImHungryBackendER.Services.ControllerServices.RestaurantManagementServ
 
         public async Task AddCategory(AddCategoryRequest request)
         {
+            var restaurantId = _restaurantManagerService.GetRestaurantID();
+
             var newCategory = new Category()
             {
                 Name = request.Name,
-                RestaurantId = request.RestaurantId
+                RestaurantId = restaurantId,   
             };
 
             _context.Categories.Add(newCategory);
