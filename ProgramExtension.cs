@@ -46,7 +46,7 @@ namespace ImHungryBackendER
             builder.Services.AddTransient<IRestaurantService, RestaurantService>();
             //RestaurantManagementServices
             builder.Services.AddTransient<IRestaurantManagerService, RestaurantManagerService>();
-            builder.Services.AddTransient<IMenuService, MenuService>();
+            builder.Services.AddTransient<IMenuServices, MenuService>();
             //UserServices
             builder.Services.AddTransient<IUserService, UserService>();
             builder.Services.AddTransient<ICartService, CartService>();

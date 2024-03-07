@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ImHungryBackendER.Services.ControllerServices.RestaurantManagementServices
 {
-    public class MenuService : IMenuService
+    public class MenuService : IMenuServices
     {
         private readonly ImHungryContext _context;
         private readonly IMapper _mapper;
@@ -34,7 +34,12 @@ namespace ImHungryBackendER.Services.ControllerServices.RestaurantManagementServ
             var menu = await _restaurantService.GetRestaurantMenuByID(restaurantID);
 
             return menu;
-        } 
+        }
+
+        public async Task AddItemToMenu()
+        {
+
+        }
 
         public async Task<JsonResult> GetCategories()
         {
@@ -60,11 +65,12 @@ namespace ImHungryBackendER.Services.ControllerServices.RestaurantManagementServ
             await _context.SaveChangesAsync();
         }
 
-        public async Task AddItemToMenu()
+        public async Task DeleteCategoryById(long categorId)
         {
+            var category = _context.Categories.Where(a => a.Id == categorId).FirstOrDefault();
 
+            _context.Categories.Remove(category);
+            await _context.SaveChangesAsync();
         }
-
-
     }
 }

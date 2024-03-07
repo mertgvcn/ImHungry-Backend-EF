@@ -10,9 +10,9 @@ namespace ImHungryBackendER.Controllers.RestaurantOwnerAPIs
     [Authorize(Roles = "RestaurantOwner")]
     public class MenuController : Controller
     {
-        private readonly IMenuService _menuService;
+        private readonly IMenuServices _menuService;
 
-        public MenuController(IMenuService menuService)
+        public MenuController(IMenuServices menuService)
         {
             _menuService = menuService;
         }
@@ -33,6 +33,12 @@ namespace ImHungryBackendER.Controllers.RestaurantOwnerAPIs
         public async Task AddCategory([FromBody] AddCategoryRequest request)
         {
             await _menuService.AddCategory(request);
+        }
+
+        [HttpDelete("DeleteCategoryById")]
+        public async Task DeleteCategoryById([FromQuery] long categoryId)
+        {
+            await _menuService.DeleteCategoryById(categoryId);
         }
     }
 }
