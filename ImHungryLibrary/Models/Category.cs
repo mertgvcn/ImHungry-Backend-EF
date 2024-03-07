@@ -10,6 +10,8 @@ namespace ImHungryLibrary.Models
         [MaxLength(50)]
         public string Name { get; set; }
 
+        public bool isActive { get; set; }
+
         public long RestaurantId { get; set; }
         public Restaurant Restaurant { get; set; }
     }

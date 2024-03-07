@@ -58,6 +58,7 @@ namespace ImHungryBackendER.Services.ControllerServices.RestaurantManagementServ
             var newCategory = new Category()
             {
                 Name = request.Name,
+                isActive = true,
                 RestaurantId = restaurantId,   
             };
 
